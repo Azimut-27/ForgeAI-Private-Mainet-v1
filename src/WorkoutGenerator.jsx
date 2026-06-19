@@ -111,6 +111,7 @@ const createForgeUserFromSupabase = (user) => {
     provider: 'supabase',
     createdAt: user.created_at,
     updatedAt: user.updated_at,
+    user_metadata: user.user_metadata || {},
     raw: user
   };
 };
@@ -139,18 +140,6 @@ export default function WorkoutGenerator() {
   useEffect(() => {
     let isMounted = true;
 
-    const syncAuthenticatedProfile = (user) => {
-      if (!user) return;
-      void upsertUserProfile(user)
-        .then(profile => {
-          if (!isMounted || !profile?.username) return;
-          setAuthUser(current => current?.id === user.id ? { ...current, name: profile.username } : current);
-        })
-        .catch(error => {
-          console.error('[ForgeAI Supabase] profile upsert failed', error);
-        });
-    };
-
     const initializeSupabaseSession = async () => {
       if (!supabase) {
         if (isMounted) {
@@ -170,7 +159,6 @@ export default function WorkoutGenerator() {
       setAuthUser(restoredUser);
       if (restoredUser) {
         initializeLocalUserState();
-        syncAuthenticatedProfile(data?.session?.user);
       }
       setAuthLoading(false);
     };
@@ -183,7 +171,6 @@ export default function WorkoutGenerator() {
       setAuthUser(nextUser);
       if (nextUser) {
         initializeLocalUserState();
-        syncAuthenticatedProfile(session?.user);
       }
       setAuthLoading(false);
     }) || {};
@@ -193,6 +180,25 @@ export default function WorkoutGenerator() {
       listener?.subscription?.unsubscribe?.();
     };
   }, []);
+
+  useEffect(() => {
+    if (!authUser?.id || !supabase) return undefined;
+    let cancelled = false;
+    console.log('ForgeAI profile sync called', authUser.id);
+    void upsertUserProfile(authUser)
+      .then(profile => {
+        console.log('ForgeAI profile synced', profile);
+        if (!cancelled && profile?.username) {
+          setAuthUser(current => current?.id === authUser.id ? { ...current, name: profile.username } : current);
+        }
+      })
+      .catch(error => {
+        console.error('ForgeAI profile sync failed', error);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [authUser?.id]);
 
   useEffect(() => {
     setSettings(prev => {
@@ -373,7 +379,9 @@ export default function WorkoutGenerator() {
       const localPrograms = loadLocalProPrograms(userId);
 
       try {
+        console.log('ForgeAI program load called', userId);
         const remotePrograms = await loadUserPrograms(userId);
+        console.log('ForgeAI programs loaded', remotePrograms.length);
         if (!remotePrograms.length && localPrograms.length) {
           await Promise.allSettled(localPrograms.map(item => saveUserProgram(userId, item.programData)));
         } else if (remotePrograms.length) {
@@ -401,7 +409,9 @@ export default function WorkoutGenerator() {
       }
 
       try {
+        console.log('ForgeAI workout log load called', userId);
         const remoteLogs = await loadUserWorkoutLogs(userId);
+        console.log('ForgeAI workout logs loaded', remoteLogs.length);
         const remoteClientIds = new Set(remoteLogs.map(log => log.id).filter(Boolean));
         const unsyncedLogs = localLogs.filter(log => log.id && !remoteClientIds.has(log.id));
         const uploadResults = await Promise.allSettled(unsyncedLogs.map(log => saveUserWorkoutLog(userId, log)));
@@ -5190,25 +5200,36 @@ export default function WorkoutGenerator() {
   const persistGeneratedProProgram = async (program) => {
     saveLocalProProgram(program, authUser?.id);
     if (!authUser?.id || !supabase) return;
+    console.log('ForgeAI program save called', {
+      userId: authUser.id,
+      sport: program?.sport,
+      existingProgramId: program?.supabaseProgramId || null
+    });
     try {
       const saved = program.supabaseProgramId
         ? await updateUserProgram(authUser.id, program.supabaseProgramId, program)
         : await saveUserProgram(authUser.id, program);
+      console.log('ForgeAI program saved', saved.id);
       const syncedProgram = { ...program, supabaseProgramId: saved.id };
       saveLocalProProgram(syncedProgram, authUser.id);
       setProGeneratedProgram(current => (
         current?.generationSeed === program.generationSeed ? syncedProgram : current
       ));
     } catch (error) {
-      console.error('[ForgeAI Supabase] program save failed; local fallback retained', error);
+      console.error('ForgeAI program save failed', error);
       setLogActionMessage('Program saved on this device and will sync when Supabase is available.');
     }
   };
 
   const persistCompletedWorkoutLog = async (entry) => {
     if (!entry || !authUser?.id || !supabase) return;
+    console.log('ForgeAI workout log save called', {
+      userId: authUser.id,
+      workoutId: entry.id
+    });
     try {
       const syncedEntry = normalizeWorkoutLogEntry(await saveUserWorkoutLog(authUser.id, entry));
+      console.log('ForgeAI workout log saved', syncedEntry.supabaseId);
       setWorkoutLogs(currentLogs => {
         const nextLogs = currentLogs.map(log => log.id === entry.id ? syncedEntry : log);
         saveWorkoutLogs(nextLogs, authUser.id);
@@ -5216,7 +5237,7 @@ export default function WorkoutGenerator() {
       });
       setActiveSessionSummary(current => current?.id === entry.id ? syncedEntry : current);
     } catch (error) {
-      console.error('[ForgeAI Supabase] workout save failed; local fallback retained', error);
+      console.error('ForgeAI workout log save failed', error);
       setLogActionMessage('Workout saved on this device and will sync when Supabase is available.');
     }
   };
