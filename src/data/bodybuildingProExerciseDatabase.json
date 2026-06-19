@@ -1,0 +1,1352 @@
+[
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Upper Chest",
+    "exercise": "Incline Barbell Press",
+    "tier": "Main",
+    "equipment": "Barbell / Bench",
+    "pattern": "Incline Press",
+    "fatigueCost": "High",
+    "notes": "Heavy upper-chest compound with strong progressive loading potential."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Upper Chest",
+    "exercise": "Incline Dumbbell Press",
+    "tier": "Main",
+    "equipment": "Dumbbells / Bench",
+    "pattern": "Incline Press",
+    "fatigueCost": "Moderate",
+    "notes": "Stable hypertrophy press with strong pec stretch and range of motion."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Upper Chest",
+    "exercise": "Low-Incline Smith Machine Press",
+    "tier": "Main",
+    "equipment": "Smith Machine / Bench",
+    "pattern": "Incline Press",
+    "fatigueCost": "Moderate",
+    "notes": "High-output stable press for upper chest with lower skill demand."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Upper Chest",
+    "exercise": "Incline Machine Press",
+    "tier": "Main",
+    "equipment": "Machine",
+    "pattern": "Incline Press",
+    "fatigueCost": "Moderate",
+    "notes": "Stable machine press for targeted upper-chest output."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Upper Chest",
+    "exercise": "Incline Cable Fly",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Fly",
+    "fatigueCost": "Low",
+    "notes": "Lengthened upper-chest isolation with constant tension."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Upper Chest",
+    "exercise": "Low-to-High Cable Fly",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Fly",
+    "fatigueCost": "Low",
+    "notes": "Biases clavicular pec fibers with low systemic fatigue."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Mid Chest",
+    "exercise": "Flat Dumbbell Press",
+    "tier": "Main",
+    "equipment": "Dumbbells / Bench",
+    "pattern": "Horizontal Press",
+    "fatigueCost": "Moderate",
+    "notes": "Strong mid-chest hypertrophy press with natural arm path."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Mid Chest",
+    "exercise": "Machine Chest Press",
+    "tier": "Main",
+    "equipment": "Machine",
+    "pattern": "Horizontal Press",
+    "fatigueCost": "Moderate",
+    "notes": "Stable high-output chest press for hard sets close to failure."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Mid Chest",
+    "exercise": "Smith Machine Bench Press",
+    "tier": "Main",
+    "equipment": "Smith Machine / Bench",
+    "pattern": "Horizontal Press",
+    "fatigueCost": "Moderate",
+    "notes": "Stable horizontal press for controlled progressive overload."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Mid Chest",
+    "exercise": "Plate-Loaded Chest Press",
+    "tier": "Main",
+    "equipment": "Plate-Loaded Machine",
+    "pattern": "Horizontal Press",
+    "fatigueCost": "Moderate",
+    "notes": "High-output machine press with strong loadability."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Mid Chest",
+    "exercise": "Push-Up",
+    "tier": "Secondary",
+    "equipment": "Bodyweight",
+    "pattern": "Horizontal Press",
+    "fatigueCost": "Low",
+    "notes": "Useful bodyweight chest work and warm-up volume."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Mid Chest",
+    "exercise": "Cable Chest Press",
+    "tier": "Secondary",
+    "equipment": "Cable",
+    "pattern": "Horizontal Press",
+    "fatigueCost": "Low",
+    "notes": "Constant-tension press with adjustable line of pull."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Lower Chest",
+    "exercise": "Weighted Chest Dip",
+    "tier": "Main",
+    "equipment": "Dip Station / Belt",
+    "pattern": "Dip",
+    "fatigueCost": "High",
+    "notes": "High-output lower-chest and triceps compound when shoulder tolerance is good."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Lower Chest",
+    "exercise": "Assisted Chest Dip",
+    "tier": "Secondary",
+    "equipment": "Assisted Dip Machine",
+    "pattern": "Dip",
+    "fatigueCost": "Moderate",
+    "notes": "Lower-chest pattern with scalable assistance."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Lower Chest",
+    "exercise": "Decline Machine Press",
+    "tier": "Secondary",
+    "equipment": "Machine",
+    "pattern": "Decline Press",
+    "fatigueCost": "Moderate",
+    "notes": "Stable lower-chest press with controlled fatigue cost."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Lower Chest",
+    "exercise": "High-to-Low Cable Fly",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Fly",
+    "fatigueCost": "Low",
+    "notes": "Lower-chest isolation with constant tension."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Fly / Isolation",
+    "exercise": "Pec Deck Fly",
+    "tier": "Isolation",
+    "equipment": "Machine",
+    "pattern": "Fly",
+    "fatigueCost": "Low",
+    "notes": "Stable pec isolation with minimal setup and low systemic fatigue."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Fly / Isolation",
+    "exercise": "Dumbbell Fly",
+    "tier": "Isolation",
+    "equipment": "Dumbbells / Bench",
+    "pattern": "Fly",
+    "fatigueCost": "Low",
+    "notes": "Lengthened pec isolation; control range carefully."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Fly / Isolation",
+    "exercise": "Cable Fly",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Fly",
+    "fatigueCost": "Low",
+    "notes": "Adjustable chest isolation with consistent tension curve."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Fly / Isolation",
+    "exercise": "Single-Arm Cable Fly",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Fly",
+    "fatigueCost": "Low",
+    "notes": "Unilateral chest isolation for line-of-pull control."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Vertical Pull",
+    "exercise": "Weighted Pull-Up",
+    "tier": "Main",
+    "equipment": "Pull-Up Bar / Belt",
+    "pattern": "Vertical Pull",
+    "fatigueCost": "High",
+    "notes": "High-output vertical pull for lats, upper back, and arm flexors."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Vertical Pull",
+    "exercise": "Pull-Up",
+    "tier": "Main",
+    "equipment": "Pull-Up Bar",
+    "pattern": "Vertical Pull",
+    "fatigueCost": "Moderate",
+    "notes": "Bodyweight vertical pull with strong lat and upper-back demand."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Vertical Pull",
+    "exercise": "Neutral-Grip Pull-Up",
+    "tier": "Secondary",
+    "equipment": "Pull-Up Bar",
+    "pattern": "Vertical Pull",
+    "fatigueCost": "Moderate",
+    "notes": "Joint-friendly vertical pull with balanced lat and arm involvement."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Vertical Pull",
+    "exercise": "Lat Pulldown",
+    "tier": "Main",
+    "equipment": "Cable / Pulldown",
+    "pattern": "Vertical Pull",
+    "fatigueCost": "Moderate",
+    "notes": "Stable vertical pull for progressive lat-focused hypertrophy."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Horizontal Row",
+    "exercise": "Barbell Row",
+    "tier": "Main",
+    "equipment": "Barbell",
+    "pattern": "Horizontal Row",
+    "fatigueCost": "High",
+    "notes": "Heavy compound row with high posterior-chain and bracing demand."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Horizontal Row",
+    "exercise": "Chest-Supported Row",
+    "tier": "Main",
+    "equipment": "Machine / Bench",
+    "pattern": "Horizontal Row",
+    "fatigueCost": "Moderate",
+    "notes": "Stable row that reduces lower-back fatigue and improves target loading."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Horizontal Row",
+    "exercise": "T-Bar Row",
+    "tier": "Main",
+    "equipment": "T-Bar / Landmine",
+    "pattern": "Horizontal Row",
+    "fatigueCost": "Moderate",
+    "notes": "High-output row with strong mid-back loading."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Horizontal Row",
+    "exercise": "Seated Cable Row",
+    "tier": "Secondary",
+    "equipment": "Cable",
+    "pattern": "Horizontal Row",
+    "fatigueCost": "Low",
+    "notes": "Stable row for controlled scapular retraction and lat loading."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Horizontal Row",
+    "exercise": "One-Arm Dumbbell Row",
+    "tier": "Secondary",
+    "equipment": "Dumbbell / Bench",
+    "pattern": "Horizontal Row",
+    "fatigueCost": "Moderate",
+    "notes": "Unilateral row with strong lat and upper-back stimulus."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Lat Bias",
+    "exercise": "Machine Pullover",
+    "tier": "Secondary",
+    "equipment": "Machine",
+    "pattern": "Shoulder Extension",
+    "fatigueCost": "Low",
+    "notes": "Lat-focused shoulder extension without elbow flexor limitation."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Lat Bias",
+    "exercise": "Cable Pullover",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Shoulder Extension",
+    "fatigueCost": "Low",
+    "notes": "Low-fatigue lat isolation with long-range tension."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Lat Bias",
+    "exercise": "Kneeling Single-Arm Cable Pulldown",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Vertical Pull",
+    "fatigueCost": "Low",
+    "notes": "Precise lat bias and scapular path control."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Lat Bias",
+    "exercise": "Close-Grip Lat Pulldown",
+    "tier": "Secondary",
+    "equipment": "Cable / Pulldown",
+    "pattern": "Vertical Pull",
+    "fatigueCost": "Moderate",
+    "notes": "Lat-biased pulldown with strong elbow drive."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Upper Back Bias",
+    "exercise": "Rear-Delt Row",
+    "tier": "Secondary",
+    "equipment": "Machine / Dumbbells",
+    "pattern": "Upper Back Row",
+    "fatigueCost": "Low",
+    "notes": "Upper-back and rear-delt biased row."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Upper Back Bias",
+    "exercise": "Wide-Grip Seated Row",
+    "tier": "Secondary",
+    "equipment": "Cable",
+    "pattern": "Upper Back Row",
+    "fatigueCost": "Low",
+    "notes": "Scapular retraction-focused row for mid traps and rear delts."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Upper Back Bias",
+    "exercise": "Face Pull",
+    "tier": "Isolation",
+    "equipment": "Cable / Rope",
+    "pattern": "External Rotation Row",
+    "fatigueCost": "Low",
+    "notes": "Rear-delt, lower-trap, and shoulder-health accessory."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Upper Back Bias",
+    "exercise": "Reverse Pec Deck",
+    "tier": "Isolation",
+    "equipment": "Machine",
+    "pattern": "Rear Delt Fly",
+    "fatigueCost": "Low",
+    "notes": "Stable rear-delt and upper-back isolation."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Upper Back Bias",
+    "exercise": "Incline Dumbbell Row",
+    "tier": "Secondary",
+    "equipment": "Dumbbells / Bench",
+    "pattern": "Horizontal Row",
+    "fatigueCost": "Low",
+    "notes": "Chest-supported dumbbell row for upper-back control."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Squat Pattern",
+    "exercise": "Back Squat",
+    "tier": "Main",
+    "equipment": "Barbell / Rack",
+    "pattern": "Squat",
+    "fatigueCost": "High",
+    "notes": "Heavy quad-biased squat pattern with high systemic demand."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Squat Pattern",
+    "exercise": "Front Squat",
+    "tier": "Main",
+    "equipment": "Barbell / Rack",
+    "pattern": "Squat",
+    "fatigueCost": "High",
+    "notes": "Quad-biased squat with high bracing and upper-back demand."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Squat Pattern",
+    "exercise": "Smith Machine Squat",
+    "tier": "Main",
+    "equipment": "Smith Machine",
+    "pattern": "Squat",
+    "fatigueCost": "Moderate",
+    "notes": "Stable squat pattern for quad hypertrophy with controlled setup."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Squat Pattern",
+    "exercise": "Heel-Elevated Squat",
+    "tier": "Secondary",
+    "equipment": "Barbell / Wedge",
+    "pattern": "Squat",
+    "fatigueCost": "High",
+    "notes": "Quad-biased squat variation with deep knee flexion."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Machine Press",
+    "exercise": "Hack Squat",
+    "tier": "Main",
+    "equipment": "Machine",
+    "pattern": "Machine Squat",
+    "fatigueCost": "High",
+    "notes": "High-output quad machine with stable loading."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Machine Press",
+    "exercise": "Leg Press",
+    "tier": "Main",
+    "equipment": "Machine",
+    "pattern": "Machine Press",
+    "fatigueCost": "Moderate",
+    "notes": "Stable high-load quad and glute press pattern."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Machine Press",
+    "exercise": "Pendulum Squat",
+    "tier": "Main",
+    "equipment": "Machine",
+    "pattern": "Machine Squat",
+    "fatigueCost": "High",
+    "notes": "Deep knee-flexion machine squat for quad stimulus."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Machine Press",
+    "exercise": "Belt Squat",
+    "tier": "Main",
+    "equipment": "Machine",
+    "pattern": "Machine Squat",
+    "fatigueCost": "Moderate",
+    "notes": "Quad and glute loading with reduced spinal compression."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Unilateral",
+    "exercise": "Bulgarian Split Squat",
+    "tier": "Secondary",
+    "equipment": "Dumbbells / Bench",
+    "pattern": "Unilateral Squat",
+    "fatigueCost": "Moderate",
+    "notes": "High-stimulus unilateral quad and glute movement."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Unilateral",
+    "exercise": "Walking Lunge",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Lunge",
+    "fatigueCost": "Moderate",
+    "notes": "Dynamic unilateral quad and glute work."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Unilateral",
+    "exercise": "Step-Up",
+    "tier": "Secondary",
+    "equipment": "Dumbbells / Box",
+    "pattern": "Step-Up",
+    "fatigueCost": "Moderate",
+    "notes": "Unilateral pattern with strong hip and knee extension demand."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Unilateral",
+    "exercise": "Reverse Lunge",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Lunge",
+    "fatigueCost": "Moderate",
+    "notes": "Joint-friendly unilateral quad/glute accessory."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Isolation",
+    "exercise": "Leg Extension",
+    "tier": "Isolation",
+    "equipment": "Machine",
+    "pattern": "Knee Extension",
+    "fatigueCost": "Low",
+    "notes": "Direct quad isolation with low systemic fatigue."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Isolation",
+    "exercise": "Single-Leg Leg Extension",
+    "tier": "Isolation",
+    "equipment": "Machine",
+    "pattern": "Knee Extension",
+    "fatigueCost": "Low",
+    "notes": "Unilateral quad isolation for symmetry and intent."
+  },
+  {
+    "muscleGroup": "Hamstrings",
+    "subgroup": "Hip Hinge",
+    "exercise": "Romanian Deadlift",
+    "tier": "Main",
+    "equipment": "Barbell",
+    "pattern": "Hip Hinge",
+    "fatigueCost": "High",
+    "notes": "High-output hamstring and glute hinge with strong lengthened loading."
+  },
+  {
+    "muscleGroup": "Hamstrings",
+    "subgroup": "Hip Hinge",
+    "exercise": "Dumbbell Romanian Deadlift",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Hip Hinge",
+    "fatigueCost": "Moderate",
+    "notes": "Accessible hinge with strong hamstring stretch."
+  },
+  {
+    "muscleGroup": "Hamstrings",
+    "subgroup": "Hip Hinge",
+    "exercise": "Stiff-Leg Deadlift",
+    "tier": "Main",
+    "equipment": "Barbell",
+    "pattern": "Hip Hinge",
+    "fatigueCost": "High",
+    "notes": "Hamstring-biased hinge with high posterior-chain demand."
+  },
+  {
+    "muscleGroup": "Hamstrings",
+    "subgroup": "Hip Hinge",
+    "exercise": "Good Morning",
+    "tier": "Secondary",
+    "equipment": "Barbell",
+    "pattern": "Hip Hinge",
+    "fatigueCost": "High",
+    "notes": "Posterior-chain hinge with high bracing demand."
+  },
+  {
+    "muscleGroup": "Hamstrings",
+    "subgroup": "Knee Flexion",
+    "exercise": "Seated Leg Curl",
+    "tier": "Isolation",
+    "equipment": "Machine",
+    "pattern": "Knee Flexion",
+    "fatigueCost": "Low",
+    "notes": "Lengthened hamstring isolation with strong hypertrophy value."
+  },
+  {
+    "muscleGroup": "Hamstrings",
+    "subgroup": "Knee Flexion",
+    "exercise": "Lying Leg Curl",
+    "tier": "Isolation",
+    "equipment": "Machine",
+    "pattern": "Knee Flexion",
+    "fatigueCost": "Low",
+    "notes": "Stable knee-flexion isolation for hamstrings."
+  },
+  {
+    "muscleGroup": "Hamstrings",
+    "subgroup": "Knee Flexion",
+    "exercise": "Standing Single-Leg Curl",
+    "tier": "Isolation",
+    "equipment": "Machine",
+    "pattern": "Knee Flexion",
+    "fatigueCost": "Low",
+    "notes": "Unilateral hamstring isolation for symmetry."
+  },
+  {
+    "muscleGroup": "Hamstrings",
+    "subgroup": "Knee Flexion",
+    "exercise": "Nordic Curl",
+    "tier": "Secondary",
+    "equipment": "Bodyweight / Partner",
+    "pattern": "Knee Flexion",
+    "fatigueCost": "High",
+    "notes": "Advanced lengthened hamstring strength movement."
+  },
+  {
+    "muscleGroup": "Hamstrings",
+    "subgroup": "Posterior Chain",
+    "exercise": "Back Extension",
+    "tier": "Secondary",
+    "equipment": "Back Extension Bench",
+    "pattern": "Hip Extension",
+    "fatigueCost": "Moderate",
+    "notes": "Posterior-chain accessory with glute/hamstring bias."
+  },
+  {
+    "muscleGroup": "Hamstrings",
+    "subgroup": "Posterior Chain",
+    "exercise": "Glute-Ham Raise",
+    "tier": "Secondary",
+    "equipment": "GHR Machine",
+    "pattern": "Knee Flexion / Hip Extension",
+    "fatigueCost": "High",
+    "notes": "High-output posterior-chain movement."
+  },
+  {
+    "muscleGroup": "Hamstrings",
+    "subgroup": "Posterior Chain",
+    "exercise": "Reverse Hyper",
+    "tier": "Secondary",
+    "equipment": "Reverse Hyper Machine",
+    "pattern": "Hip Extension",
+    "fatigueCost": "Moderate",
+    "notes": "Posterior-chain accessory with lower-back friendly loading."
+  },
+  {
+    "muscleGroup": "Glutes",
+    "subgroup": "Hip Thrust",
+    "exercise": "Barbell Hip Thrust",
+    "tier": "Main",
+    "equipment": "Barbell / Bench",
+    "pattern": "Hip Thrust",
+    "fatigueCost": "Moderate",
+    "notes": "High-output glute bridge pattern with strong loadability."
+  },
+  {
+    "muscleGroup": "Glutes",
+    "subgroup": "Hip Thrust",
+    "exercise": "Machine Hip Thrust",
+    "tier": "Main",
+    "equipment": "Machine",
+    "pattern": "Hip Thrust",
+    "fatigueCost": "Moderate",
+    "notes": "Stable glute-focused compound with easy progression."
+  },
+  {
+    "muscleGroup": "Glutes",
+    "subgroup": "Hip Thrust",
+    "exercise": "Smith Machine Hip Thrust",
+    "tier": "Main",
+    "equipment": "Smith Machine / Bench",
+    "pattern": "Hip Thrust",
+    "fatigueCost": "Moderate",
+    "notes": "Stable hip thrust variation with controlled setup."
+  },
+  {
+    "muscleGroup": "Glutes",
+    "subgroup": "Hip Thrust",
+    "exercise": "Single-Leg Hip Thrust",
+    "tier": "Secondary",
+    "equipment": "Bench / Bodyweight",
+    "pattern": "Hip Thrust",
+    "fatigueCost": "Low",
+    "notes": "Unilateral glute pattern for symmetry and control."
+  },
+  {
+    "muscleGroup": "Glutes",
+    "subgroup": "Lunge / Split Squat",
+    "exercise": "Bulgarian Split Squat",
+    "tier": "Secondary",
+    "equipment": "Dumbbells / Bench",
+    "pattern": "Unilateral Squat",
+    "fatigueCost": "Moderate",
+    "notes": "Glute-biased when using longer stride and forward torso angle."
+  },
+  {
+    "muscleGroup": "Glutes",
+    "subgroup": "Lunge / Split Squat",
+    "exercise": "Deficit Reverse Lunge",
+    "tier": "Secondary",
+    "equipment": "Dumbbells / Step",
+    "pattern": "Lunge",
+    "fatigueCost": "Moderate",
+    "notes": "Lengthened glute and quad loading through extended range."
+  },
+  {
+    "muscleGroup": "Glutes",
+    "subgroup": "Lunge / Split Squat",
+    "exercise": "Walking Lunge",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Lunge",
+    "fatigueCost": "Moderate",
+    "notes": "Glute and quad volume with athletic transfer."
+  },
+  {
+    "muscleGroup": "Glutes",
+    "subgroup": "Extension / Kickback",
+    "exercise": "Cable Glute Kickback",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Hip Extension",
+    "fatigueCost": "Low",
+    "notes": "Low-fatigue glute isolation with precise intent."
+  },
+  {
+    "muscleGroup": "Glutes",
+    "subgroup": "Extension / Kickback",
+    "exercise": "Machine Glute Kickback",
+    "tier": "Isolation",
+    "equipment": "Machine",
+    "pattern": "Hip Extension",
+    "fatigueCost": "Low",
+    "notes": "Stable glute isolation for focused contraction."
+  },
+  {
+    "muscleGroup": "Glutes",
+    "subgroup": "Extension / Kickback",
+    "exercise": "Back Extension",
+    "tier": "Secondary",
+    "equipment": "Back Extension Bench",
+    "pattern": "Hip Extension",
+    "fatigueCost": "Moderate",
+    "notes": "Glute-focused posterior-chain accessory."
+  },
+  {
+    "muscleGroup": "Glutes",
+    "subgroup": "Extension / Kickback",
+    "exercise": "Cable Hip Abduction",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Hip Abduction",
+    "fatigueCost": "Low",
+    "notes": "Glute medius isolation for hip stability and shape."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Pressing",
+    "exercise": "Seated Dumbbell Shoulder Press",
+    "tier": "Main",
+    "equipment": "Dumbbells / Bench",
+    "pattern": "Vertical Press",
+    "fatigueCost": "Moderate",
+    "notes": "High-output shoulder press with natural arm path."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Pressing",
+    "exercise": "Machine Shoulder Press",
+    "tier": "Main",
+    "equipment": "Machine",
+    "pattern": "Vertical Press",
+    "fatigueCost": "Moderate",
+    "notes": "Stable deltoid press for progressive loading."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Pressing",
+    "exercise": "Smith Machine Shoulder Press",
+    "tier": "Main",
+    "equipment": "Smith Machine / Bench",
+    "pattern": "Vertical Press",
+    "fatigueCost": "Moderate",
+    "notes": "Stable overhead press pattern."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Pressing",
+    "exercise": "Barbell Overhead Press",
+    "tier": "Main",
+    "equipment": "Barbell",
+    "pattern": "Vertical Press",
+    "fatigueCost": "High",
+    "notes": "Heavy compound press with higher systemic and bracing demand."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Side Delts",
+    "exercise": "Dumbbell Lateral Raise",
+    "tier": "Isolation",
+    "equipment": "Dumbbells",
+    "pattern": "Shoulder Abduction",
+    "fatigueCost": "Low",
+    "notes": "Core side-delt isolation with low systemic fatigue."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Side Delts",
+    "exercise": "Cable Lateral Raise",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Shoulder Abduction",
+    "fatigueCost": "Low",
+    "notes": "Lengthened side-delt isolation with constant tension."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Side Delts",
+    "exercise": "Machine Lateral Raise",
+    "tier": "Isolation",
+    "equipment": "Machine",
+    "pattern": "Shoulder Abduction",
+    "fatigueCost": "Low",
+    "notes": "Stable side-delt isolation for hard sets close to failure."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Side Delts",
+    "exercise": "Lean-Away Cable Lateral Raise",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Shoulder Abduction",
+    "fatigueCost": "Low",
+    "notes": "Side-delt isolation with stronger lengthened challenge."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Rear Delts",
+    "exercise": "Reverse Pec Deck",
+    "tier": "Isolation",
+    "equipment": "Machine",
+    "pattern": "Rear Delt Fly",
+    "fatigueCost": "Low",
+    "notes": "Stable rear-delt isolation with upper-back support."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Rear Delts",
+    "exercise": "Bent-Over Dumbbell Rear Delt Raise",
+    "tier": "Isolation",
+    "equipment": "Dumbbells",
+    "pattern": "Rear Delt Fly",
+    "fatigueCost": "Low",
+    "notes": "Rear-delt isolation with simple setup."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Rear Delts",
+    "exercise": "Cable Rear Delt Fly",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Rear Delt Fly",
+    "fatigueCost": "Low",
+    "notes": "Constant-tension rear-delt isolation."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Rear Delts",
+    "exercise": "Face Pull",
+    "tier": "Isolation",
+    "equipment": "Cable / Rope",
+    "pattern": "External Rotation Row",
+    "fatigueCost": "Low",
+    "notes": "Rear-delt and shoulder-health accessory."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Front Delts",
+    "exercise": "Cable Front Raise",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Shoulder Flexion",
+    "fatigueCost": "Low",
+    "notes": "Front-delt isolation when direct work is needed."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Front Delts",
+    "exercise": "Dumbbell Front Raise",
+    "tier": "Isolation",
+    "equipment": "Dumbbells",
+    "pattern": "Shoulder Flexion",
+    "fatigueCost": "Low",
+    "notes": "Simple anterior-delt isolation."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Standard Curl",
+    "exercise": "Standing Barbell Curl",
+    "tier": "Secondary",
+    "equipment": "Barbell",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Moderate",
+    "notes": "Heavy biceps curl with strong loadability."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Standard Curl",
+    "exercise": "Standing Dumbbell Curl",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Low",
+    "notes": "Biceps curl with natural wrist rotation."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Standard Curl",
+    "exercise": "Cable Curl",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Low",
+    "notes": "Constant-tension biceps isolation."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Standard Curl",
+    "exercise": "EZ-Bar Curl",
+    "tier": "Secondary",
+    "equipment": "EZ-Bar",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Moderate",
+    "notes": "Joint-friendly heavier curl option."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Lengthened Curl",
+    "exercise": "Incline Dumbbell Curl",
+    "tier": "Isolation",
+    "equipment": "Dumbbells / Incline Bench",
+    "pattern": "Lengthened Curl",
+    "fatigueCost": "Low",
+    "notes": "Lengthened biceps isolation with strong stretch stimulus."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Lengthened Curl",
+    "exercise": "Concentration Curl",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Lengthened Curl",
+    "fatigueCost": "Low",
+    "notes": "Cable curl biased toward the lengthened range."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Lengthened Curl",
+    "exercise": "Preacher Curl",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Lengthened Curl",
+    "fatigueCost": "Low",
+    "notes": "Lengthened biceps work with constant cable tension."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Preacher / Supported",
+    "exercise": "Zottman Curl",
+    "tier": "Isolation",
+    "equipment": "Preacher Bench / EZ-Bar",
+    "pattern": "Supported Curl",
+    "fatigueCost": "Low",
+    "notes": "Stable curl with high target isolation."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Preacher / Supported",
+    "exercise": "Machine Preacher Curl",
+    "tier": "Isolation",
+    "equipment": "Machine",
+    "pattern": "Supported Curl",
+    "fatigueCost": "Low",
+    "notes": "Stable biceps isolation with easy progression."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Preacher / Supported",
+    "exercise": "Spider Curl",
+    "tier": "Isolation",
+    "equipment": "Bench / Dumbbells",
+    "pattern": "Supported Curl",
+    "fatigueCost": "Low",
+    "notes": "Supported curl that limits cheating and improves intent."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Brachialis / Hammer",
+    "exercise": "Hammer Curl",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Neutral-Grip Curl",
+    "fatigueCost": "Low",
+    "notes": "Brachialis and brachioradialis-biased curl."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Brachialis / Hammer",
+    "exercise": "Cross-Body Hammer Curl",
+    "tier": "Isolation",
+    "equipment": "Dumbbells",
+    "pattern": "Neutral-Grip Curl",
+    "fatigueCost": "Low",
+    "notes": "Arm flexor accessory with strong brachialis focus."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Brachialis / Hammer",
+    "exercise": "Rope Cable Hammer Curl",
+    "tier": "Isolation",
+    "equipment": "Cable / Rope",
+    "pattern": "Neutral-Grip Curl",
+    "fatigueCost": "Low",
+    "notes": "Constant-tension neutral-grip curl."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Lengthened Curl",
+    "exercise": "Drag Curl",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Lengthened Curl",
+    "fatigueCost": "Low",
+    "notes": "Lengthened biceps work with constant cable tension."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Lengthened Curl",
+    "exercise": "Supinated close grip-Grip Lat Pulldown",
+    "tier": "Secondary",
+    "equipment": "Cable",
+    "pattern": "Lengthened Curl",
+    "fatigueCost": "Low",
+    "notes": null
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Lengthened Curl",
+    "exercise": "One Arm Preacher Curl",
+    "tier": "Isolation",
+    "equipment": "Dumbbells",
+    "pattern": "Lengthened Curl",
+    "fatigueCost": "Low",
+    "notes": null
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Pressing",
+    "exercise": "Close-Grip Bench Press",
+    "tier": "Main",
+    "equipment": "Barbell / Bench",
+    "pattern": "Close-Grip Press",
+    "fatigueCost": "High",
+    "notes": "High-output triceps compound with chest and shoulder support."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Pressing",
+    "exercise": "Smith Machine Close-Grip Press",
+    "tier": "Main",
+    "equipment": "Smith Machine / Bench",
+    "pattern": "Close-Grip Press",
+    "fatigueCost": "Moderate",
+    "notes": "Stable triceps pressing movement."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Pressing",
+    "exercise": "Weighted Dip",
+    "tier": "Main",
+    "equipment": "Dip Station / Belt",
+    "pattern": "Dip",
+    "fatigueCost": "High",
+    "notes": "High-output triceps and lower-chest compound."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Pressing",
+    "exercise": "Machine Dip",
+    "tier": "Secondary",
+    "equipment": "Machine",
+    "pattern": "Dip",
+    "fatigueCost": "Moderate",
+    "notes": "Stable triceps pressing accessory."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Overhead Extension",
+    "exercise": "Overhead Cable Triceps Extension",
+    "tier": "Isolation",
+    "equipment": "Cable / Rope",
+    "pattern": "Overhead Extension",
+    "fatigueCost": "Low",
+    "notes": "Lengthened long-head triceps isolation."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Overhead Extension",
+    "exercise": "EZ-Bar Overhead Extension",
+    "tier": "Isolation",
+    "equipment": "EZ-Bar",
+    "pattern": "Overhead Extension",
+    "fatigueCost": "Low",
+    "notes": "Loaded long-head triceps movement."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Overhead Extension",
+    "exercise": "Dumbbell Overhead Extension",
+    "tier": "Isolation",
+    "equipment": "Dumbbell",
+    "pattern": "Overhead Extension",
+    "fatigueCost": "Low",
+    "notes": "Simple overhead triceps isolation."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Pushdown",
+    "exercise": "Cable Triceps Pushdown",
+    "tier": "Isolation",
+    "equipment": "Cable / Rope",
+    "pattern": "Pushdown",
+    "fatigueCost": "Low",
+    "notes": "Low-fatigue triceps isolation with easy setup."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Pushdown",
+    "exercise": "Straight-Bar Pushdown",
+    "tier": "Isolation",
+    "equipment": "Cable / Bar",
+    "pattern": "Pushdown",
+    "fatigueCost": "Low",
+    "notes": "Stable pushdown for lateral and medial head focus."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Pushdown",
+    "exercise": "Single-Arm Cable Pushdown",
+    "tier": "Isolation",
+    "equipment": "Cable",
+    "pattern": "Pushdown",
+    "fatigueCost": "Low",
+    "notes": "Unilateral triceps isolation for symmetry."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Lengthened Triceps",
+    "exercise": "Skull Crusher",
+    "tier": "Isolation",
+    "equipment": "EZ-Bar / Bench",
+    "pattern": "Elbow Extension",
+    "fatigueCost": "Moderate",
+    "notes": "Lengthened triceps isolation with higher elbow stress potential."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Lengthened Triceps",
+    "exercise": "Cable Skull Crusher",
+    "tier": "Isolation",
+    "equipment": "Cable / Bench",
+    "pattern": "Elbow Extension",
+    "fatigueCost": "Low",
+    "notes": "Constant-tension lengthened triceps isolation."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Lengthened Triceps",
+    "exercise": "Incline Dumbbell Triceps Extension",
+    "tier": "Isolation",
+    "equipment": "Dumbbells / Incline Bench",
+    "pattern": "Elbow Extension",
+    "fatigueCost": "Low",
+    "notes": "Lengthened long-head triceps accessory."
+  },
+  {
+    "muscleGroup": "Calves",
+    "subgroup": "Standing",
+    "exercise": "Standing Calf Raise",
+    "tier": "Isolation",
+    "equipment": "Machine",
+    "pattern": "Plantar Flexion",
+    "fatigueCost": "Low",
+    "notes": "Gastrocnemius-biased calf isolation."
+  },
+  {
+    "muscleGroup": "Calves",
+    "subgroup": "Standing",
+    "exercise": "Smith Machine Standing Calf Raise",
+    "tier": "Isolation",
+    "equipment": "Smith Machine",
+    "pattern": "Plantar Flexion",
+    "fatigueCost": "Low",
+    "notes": "Stable loaded standing calf raise."
+  },
+  {
+    "muscleGroup": "Calves",
+    "subgroup": "Standing",
+    "exercise": "Single-Leg Standing Calf Raise",
+    "tier": "Isolation",
+    "equipment": "Dumbbell / Step",
+    "pattern": "Plantar Flexion",
+    "fatigueCost": "Low",
+    "notes": "Unilateral calf isolation for symmetry."
+  },
+  {
+    "muscleGroup": "Calves",
+    "subgroup": "Seated",
+    "exercise": "Seated Calf Raise",
+    "tier": "Isolation",
+    "equipment": "Machine",
+    "pattern": "Seated Plantar Flexion",
+    "fatigueCost": "Low",
+    "notes": "Soleus-biased calf isolation."
+  },
+  {
+    "muscleGroup": "Calves",
+    "subgroup": "Seated",
+    "exercise": "Dumbbell Seated Calf Raise",
+    "tier": "Isolation",
+    "equipment": "Dumbbell / Bench",
+    "pattern": "Seated Plantar Flexion",
+    "fatigueCost": "Low",
+    "notes": "Minimal-equipment seated calf option."
+  },
+  {
+    "muscleGroup": "Calves",
+    "subgroup": "Leg Press",
+    "exercise": "Leg Press Calf Raise",
+    "tier": "Isolation",
+    "equipment": "Leg Press",
+    "pattern": "Plantar Flexion",
+    "fatigueCost": "Low",
+    "notes": "Stable calf raise using leg press platform."
+  },
+  {
+    "muscleGroup": "Calves",
+    "subgroup": "Leg Press",
+    "exercise": "Single-Leg Leg Press Calf Raise",
+    "tier": "Isolation",
+    "equipment": "Leg Press",
+    "pattern": "Plantar Flexion",
+    "fatigueCost": "Low",
+    "notes": "Unilateral leg-press calf isolation."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Flexion",
+    "exercise": "Cable Crunch",
+    "tier": "Isolation",
+    "equipment": "Cable / Rope",
+    "pattern": "Spinal Flexion",
+    "fatigueCost": "Low",
+    "notes": "Loaded abdominal flexion with easy progression."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Flexion",
+    "exercise": "Machine Crunch",
+    "tier": "Isolation",
+    "equipment": "Machine",
+    "pattern": "Spinal Flexion",
+    "fatigueCost": "Low",
+    "notes": "Stable loaded ab flexion."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Flexion",
+    "exercise": "Reverse Crunch",
+    "tier": "Isolation",
+    "equipment": "Bodyweight",
+    "pattern": "Posterior Pelvic Tilt",
+    "fatigueCost": "Low",
+    "notes": "Lower-ab focused flexion pattern."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Flexion",
+    "exercise": "Hanging Knee Raise",
+    "tier": "Secondary",
+    "equipment": "Pull-Up Bar",
+    "pattern": "Hip Flexion / Flexion",
+    "fatigueCost": "Moderate",
+    "notes": "Core and hip-flexion movement with grip demand."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Anti-Extension",
+    "exercise": "Ab Wheel Rollout",
+    "tier": "Secondary",
+    "equipment": "Ab Wheel",
+    "pattern": "Anti-Extension",
+    "fatigueCost": "Moderate",
+    "notes": "High-tension anterior-core movement."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Anti-Extension",
+    "exercise": "Plank",
+    "tier": "Isolation",
+    "equipment": "Bodyweight",
+    "pattern": "Anti-Extension",
+    "fatigueCost": "Low",
+    "notes": "Simple trunk stiffness and bracing pattern."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Anti-Extension",
+    "exercise": "Dead Bug",
+    "tier": "Isolation",
+    "equipment": "Bodyweight",
+    "pattern": "Anti-Extension",
+    "fatigueCost": "Low",
+    "notes": "Controlled core pattern for ribcage and pelvis position."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Anti-Rotation",
+    "exercise": "Pallof Press",
+    "tier": "Isolation",
+    "equipment": "Cable / Band",
+    "pattern": "Anti-Rotation",
+    "fatigueCost": "Low",
+    "notes": "Low-fatigue anti-rotation core work."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Anti-Rotation",
+    "exercise": "Suitcase Carry",
+    "tier": "Secondary",
+    "equipment": "Dumbbell / Kettlebell",
+    "pattern": "Anti-Lateral Flexion",
+    "fatigueCost": "Moderate",
+    "notes": "Loaded carry for trunk and grip stability."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Loaded Core",
+    "exercise": "Weighted Plank",
+    "tier": "Secondary",
+    "equipment": "Plate / Bodyweight",
+    "pattern": "Anti-Extension",
+    "fatigueCost": "Moderate",
+    "notes": "Progressive loaded trunk stiffness."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Loaded Core",
+    "exercise": "Decline Sit-Up",
+    "tier": "Secondary",
+    "equipment": "Decline Bench",
+    "pattern": "Loaded Flexion",
+    "fatigueCost": "Moderate",
+    "notes": "Loaded abdominal flexion with greater range."
+  }
+]
