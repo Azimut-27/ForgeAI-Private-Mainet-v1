@@ -59,6 +59,7 @@ import {
   Zap
 } from 'lucide-react';
 import { buildForgeCoachContext, generateGeminiResponse } from './lib/gemini';
+import { isSupabaseConfigured, supabase } from './lib/supabase';
 import bodybuildingProExerciseDatabase from './data/bodybuildingProExerciseDatabase.json';
 import generalFitnessProExerciseDatabase from './data/generalFitnessProExerciseDatabase.json';
 import sportPerformanceProExerciseDatabase from './data/sportPerformanceProExerciseDatabase.json';
@@ -87,17 +88,26 @@ const getForgeInitials = (name) => {
     .toUpperCase();
 };
 
+const createForgeUserFromSupabase = (user) => {
+  if (!user) return null;
+  const metadata = user.user_metadata || {};
+  const name = String(metadata.name || metadata.full_name || metadata.username || user.email?.split('@')?.[0] || '').trim();
+  return {
+    id: user.id,
+    name: name || 'ForgeAI Athlete',
+    email: user.email || '',
+    provider: 'supabase',
+    createdAt: user.created_at,
+    updatedAt: user.updated_at,
+    raw: user
+  };
+};
+
 export default function WorkoutGenerator() {
-  const [authUser, setAuthUser] = useState(() => {
-    if (typeof window === 'undefined') return null;
-    try {
-      const raw = window.localStorage.getItem('forgeai_auth_user');
-      const parsed = raw ? JSON.parse(raw) : null;
-      return parsed && typeof parsed === 'object' ? parsed : null;
-    } catch (error) {
-      return null;
-    }
-  });
+  const [authUser, setAuthUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [authMessage, setAuthMessage] = useState('');
+  const [authOAuthLoading, setAuthOAuthLoading] = useState(false);
   const usernameInputRef = useRef(null);
   const [settingsProfileMessage, setSettingsProfileMessage] = useState('');
   const [settings, setSettings] = useState({
@@ -110,6 +120,44 @@ export default function WorkoutGenerator() {
     powerMethod: 'fullRest',
     conditioningType: 'cardio'
   });
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const initializeSupabaseSession = async () => {
+      if (!supabase) {
+        if (isMounted) {
+          setAuthUser(null);
+          setAuthLoading(false);
+        }
+        return;
+      }
+
+      const { data, error } = await supabase.auth.getSession();
+      if (!isMounted) return;
+      if (error) {
+        setAuthMessage(error.message || 'Could not restore your ForgeAI session.');
+      }
+      const restoredUser = createForgeUserFromSupabase(data?.session?.user);
+      setAuthUser(restoredUser);
+      if (restoredUser) initializeLocalUserState();
+      setAuthLoading(false);
+    };
+
+    initializeSupabaseSession();
+
+    const { data: listener } = supabase?.auth.onAuthStateChange((_event, session) => {
+      const nextUser = createForgeUserFromSupabase(session?.user);
+      setAuthUser(nextUser);
+      if (nextUser) initializeLocalUserState();
+      setAuthLoading(false);
+    }) || {};
+
+    return () => {
+      isMounted = false;
+      listener?.subscription?.unsubscribe?.();
+    };
+  }, []);
 
   useEffect(() => {
     setSettings(prev => {
@@ -4931,36 +4979,14 @@ export default function WorkoutGenerator() {
 
   const saveAuthUser = (user) => {
     setAuthUser(user);
-    if (typeof window === 'undefined') return;
-
-    try {
-      if (user) {
-        window.localStorage.setItem('forgeai_auth_user', JSON.stringify(user));
-      } else {
-        window.localStorage.removeItem('forgeai_auth_user');
-      }
-    } catch (error) {
-      setLogActionMessage('Auth state changed in this session, but local storage was unavailable.');
-    }
   };
 
-  const handleMockGoogleSignIn = () => {
-    // Temporary MVP auth: replace this with Supabase Auth Google provider when backend auth is connected.
-    const mockUser = {
-      id: `google_demo_${Date.now()}`,
-      name: 'Martin Jancar',
-      email: 'martin@example.com',
-      provider: 'google',
-      createdAt: new Date().toISOString()
-    };
-
-    saveAuthUser(mockUser);
-
-    // Local initialization is temporary; later user progress, settings, and logs should sync to a backend user account.
+  const initializeLocalUserState = () => {
     const nextProgress = loadUserProgress();
     const nextSettings = loadUserSettings();
     setUserProgress(nextProgress);
     setUserSettings(nextSettings);
+
     if (typeof window !== 'undefined') {
       try {
         if (!window.localStorage.getItem('forgeai_user_progress')) {
@@ -4975,17 +5001,51 @@ export default function WorkoutGenerator() {
     }
   };
 
-  const handleSignOut = () => {
+  const handleGoogleSignIn = async () => {
+    setAuthMessage('');
+
+    if (!isSupabaseConfigured || !supabase) {
+      setAuthMessage('Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+      return;
+    }
+
+    setAuthOAuthLoading(true);
+    try {
+      const redirectTo = typeof window !== 'undefined'
+        ? `${window.location.origin}${window.location.pathname}${window.location.search}`
+        : undefined;
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo,
+          queryParams: {
+            prompt: 'select_account'
+          }
+        }
+      });
+
+      if (error) throw error;
+    } catch (error) {
+      setAuthMessage(error?.message || 'Google sign-in could not be started.');
+      setAuthOAuthLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    if (supabase) {
+      const { error } = await supabase.auth.signOut();
+      if (error) setLogActionMessage(error.message || 'Could not log out.');
+    }
     saveAuthUser(null);
     setShowSettingsScreen(false);
     setSettingsPlaceholder(null);
     setActiveTab('workout');
     setAiMenuOpen(false);
     setActiveAIModule('coach');
-    // Sign out only clears the local auth user. Workout logs, XP, settings, and PRO data remain until explicit data controls are added.
+    // Sign out only clears the Supabase session. Workout logs, XP, settings, and PRO data remain on this device for now.
   };
 
-  const handleSaveUsername = (inputValue = usernameInputRef.current?.value) => {
+  const handleSaveUsername = async (inputValue = usernameInputRef.current?.value) => {
     const cleanName = String(inputValue || '').trim().replace(/\s+/g, ' ');
     if (!cleanName) {
       setSettingsProfileMessage('Enter a username first.');
@@ -5002,8 +5062,20 @@ export default function WorkoutGenerator() {
       updatedAt: new Date().toISOString()
     };
 
+    if (supabase) {
+      const { error } = await supabase.auth.updateUser({
+        data: {
+          name: cleanName,
+          username: cleanName
+        }
+      });
+      if (error) {
+        setSettingsProfileMessage(error.message || 'Could not update username.');
+        return;
+      }
+    }
+
     saveAuthUser(nextUser);
-    // MVP-only local profile update. Later this should sync to the backend user profile.
     saveUserSettings({
       ...userSettings,
       username: cleanName,
@@ -6494,19 +6566,29 @@ export default function WorkoutGenerator() {
         <div className="space-y-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
           <button
             type="button"
-            onClick={handleMockGoogleSignIn}
-            className="group flex w-full items-center justify-center gap-3 rounded-full bg-gradient-to-r from-amber-200 via-orange-300 to-orange-400 px-6 py-5 text-base font-black text-zinc-950 shadow-[0_22px_90px_rgba(245,158,11,0.28)] transition hover:-translate-y-0.5 hover:shadow-[0_28px_110px_rgba(245,158,11,0.36)] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-100 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            onClick={handleGoogleSignIn}
+            disabled={authOAuthLoading || authLoading || !isSupabaseConfigured}
+            className="group flex w-full items-center justify-center gap-3 rounded-full bg-gradient-to-r from-amber-200 via-orange-300 to-orange-400 px-6 py-5 text-base font-black text-zinc-950 shadow-[0_22px_90px_rgba(245,158,11,0.28)] transition hover:-translate-y-0.5 hover:shadow-[0_28px_110px_rgba(245,158,11,0.36)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-100 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             <span className="grid h-7 w-7 place-items-center rounded-full bg-white text-sm font-black text-zinc-950">G</span>
-            Continue with Google
-            <ChevronRight className="h-5 w-5 transition group-hover:translate-x-0.5" />
+            {authOAuthLoading ? 'Connecting to Google...' : 'Continue with Google'}
+            {!authOAuthLoading && <ChevronRight className="h-5 w-5 transition group-hover:translate-x-0.5" />}
           </button>
+
+          {authMessage && (
+            <div className="rounded-[1.2rem] border border-amber-100/14 bg-amber-100/[0.06] px-4 py-3 text-sm font-semibold leading-5 text-amber-50/82">
+              {authMessage}
+            </div>
+          )}
+
           <p className="mx-auto max-w-xs text-center text-xs font-semibold leading-5 text-zinc-500">
             By continuing, you agree to ForgeAI Terms and Privacy Policy.
           </p>
-          <p className="text-center text-[0.62rem] font-bold uppercase tracking-[0.18em] text-zinc-700">
-            Demo Google login. Supabase Auth ready later.
-          </p>
+          {!isSupabaseConfigured && (
+            <p className="text-center text-[0.62rem] font-bold uppercase tracking-[0.18em] text-red-200/70">
+              Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY
+            </p>
+          )}
         </div>
       </div>
     </div>
