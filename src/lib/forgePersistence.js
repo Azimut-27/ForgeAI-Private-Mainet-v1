@@ -5,53 +5,23 @@ const requireSupabase = () => {
   return supabase;
 };
 
-const getUserName = (user) => (
-  String(
-    user?.user_metadata?.username
-    || user?.user_metadata?.name
-    || user?.user_metadata?.full_name
-    || user?.email?.split('@')[0]
-    || 'ForgeAI Athlete'
-  ).trim()
-);
-
-export const ensureUserProfile = async (user) => {
+export const upsertUserProfile = async (user) => {
   if (!user?.id) throw new Error('An authenticated user is required.');
   const client = requireSupabase();
-  const { data: existing, error: readError } = await client
+  const profile = {
+    id: user.id,
+    email: user.email || null,
+    username: String(user.user_metadata?.name || user.email || 'ForgeAI Athlete').trim()
+  };
+  const { error } = await client
     .from('profiles')
-    .select('id, username, email, created_at')
-    .eq('id', user.id)
-    .maybeSingle();
+    .upsert(profile, { onConflict: 'id' });
 
-  if (readError) throw readError;
-  if (existing) {
-    if (user.email && existing.email !== user.email) {
-      const { data: updated, error: updateError } = await client
-        .from('profiles')
-        .update({ email: user.email })
-        .eq('id', user.id)
-        .select('id, username, email, created_at')
-        .single();
-      if (updateError) throw updateError;
-      return updated;
-    }
-    return existing;
-  }
-
-  const { data: created, error: createError } = await client
-    .from('profiles')
-    .insert({
-      id: user.id,
-      username: getUserName(user),
-      email: user.email || null
-    })
-    .select('id, username, email, created_at')
-    .single();
-
-  if (createError) throw createError;
-  return created;
+  if (error) throw error;
+  return profile;
 };
+
+export const ensureUserProfile = upsertUserProfile;
 
 export const updateUserProfileName = async (userId, username) => {
   if (!userId) throw new Error('An authenticated user is required.');
