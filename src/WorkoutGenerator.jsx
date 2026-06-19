@@ -63,14 +63,14 @@ import { isSupabaseConfigured, supabase } from './lib/supabase';
 import {
   deleteAllUserWorkoutLogs,
   deleteUserWorkoutLog,
-  ensureUserProfile,
   loadUserPrograms,
   loadUserWorkoutLogs,
   saveUserProgram,
   saveUserWorkoutLog,
   updateUserProgram,
   updateUserProfileName,
-  updateUserWorkoutLog
+  updateUserWorkoutLog,
+  upsertUserProfile
 } from './lib/forgePersistence';
 import bodybuildingProExerciseDatabase from './data/bodybuildingProExerciseDatabase.json';
 import generalFitnessProExerciseDatabase from './data/generalFitnessProExerciseDatabase.json';
@@ -139,6 +139,18 @@ export default function WorkoutGenerator() {
   useEffect(() => {
     let isMounted = true;
 
+    const syncAuthenticatedProfile = (user) => {
+      if (!user) return;
+      void upsertUserProfile(user)
+        .then(profile => {
+          if (!isMounted || !profile?.username) return;
+          setAuthUser(current => current?.id === user.id ? { ...current, name: profile.username } : current);
+        })
+        .catch(error => {
+          console.error('[ForgeAI Supabase] profile upsert failed', error);
+        });
+    };
+
     const initializeSupabaseSession = async () => {
       if (!supabase) {
         if (isMounted) {
@@ -156,7 +168,10 @@ export default function WorkoutGenerator() {
       const restoredUser = createForgeUserFromSupabase(data?.session?.user);
       setCloudDataLoading(!!restoredUser);
       setAuthUser(restoredUser);
-      if (restoredUser) initializeLocalUserState();
+      if (restoredUser) {
+        initializeLocalUserState();
+        syncAuthenticatedProfile(data?.session?.user);
+      }
       setAuthLoading(false);
     };
 
@@ -166,7 +181,10 @@ export default function WorkoutGenerator() {
       const nextUser = createForgeUserFromSupabase(session?.user);
       setCloudDataLoading(!!nextUser);
       setAuthUser(nextUser);
-      if (nextUser) initializeLocalUserState();
+      if (nextUser) {
+        initializeLocalUserState();
+        syncAuthenticatedProfile(session?.user);
+      }
       setAuthLoading(false);
     }) || {};
 
@@ -353,16 +371,6 @@ export default function WorkoutGenerator() {
       let usedLocalFallback = false;
       const localLogs = loadWorkoutLogs(userId);
       const localPrograms = loadLocalProPrograms(userId);
-
-      try {
-        const profile = await ensureUserProfile(authUser.raw || authUser);
-        if (!cancelled && profile?.username) {
-          setAuthUser(current => current?.id === userId ? { ...current, name: profile.username } : current);
-        }
-      } catch (error) {
-        console.error('[ForgeAI Supabase] profile sync failed', error);
-        usedLocalFallback = true;
-      }
 
       try {
         const remotePrograms = await loadUserPrograms(userId);
