@@ -184,7 +184,7 @@ export default function WorkoutGenerator() {
   useEffect(() => {
     if (!authUser?.id || !supabase) return undefined;
     let cancelled = false;
-    console.log('ForgeAI profile sync called', authUser.id);
+    console.log('ForgeAI profile sync started', authUser.id);
     void upsertUserProfile(authUser)
       .then(profile => {
         console.log('ForgeAI profile synced', profile);
