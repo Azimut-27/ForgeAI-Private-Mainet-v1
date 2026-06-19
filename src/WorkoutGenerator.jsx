@@ -68,6 +68,7 @@ import {
   loadUserWorkoutLogs,
   saveUserProgram,
   saveUserWorkoutLog,
+  updateUserProgram,
   updateUserProfileName,
   updateUserWorkoutLog
 } from './lib/forgePersistence';
@@ -119,6 +120,8 @@ export default function WorkoutGenerator() {
   const [authLoading, setAuthLoading] = useState(true);
   const [authMessage, setAuthMessage] = useState('');
   const [authOAuthLoading, setAuthOAuthLoading] = useState(false);
+  const [cloudDataLoading, setCloudDataLoading] = useState(false);
+  const [cloudDataError, setCloudDataError] = useState('');
   const usernameInputRef = useRef(null);
   const supabaseHydratedUserRef = useRef(null);
   const [settingsProfileMessage, setSettingsProfileMessage] = useState('');
@@ -151,6 +154,7 @@ export default function WorkoutGenerator() {
         setAuthMessage(error.message || 'Could not restore your ForgeAI session.');
       }
       const restoredUser = createForgeUserFromSupabase(data?.session?.user);
+      setCloudDataLoading(!!restoredUser);
       setAuthUser(restoredUser);
       if (restoredUser) initializeLocalUserState();
       setAuthLoading(false);
@@ -160,6 +164,7 @@ export default function WorkoutGenerator() {
 
     const { data: listener } = supabase?.auth.onAuthStateChange((_event, session) => {
       const nextUser = createForgeUserFromSupabase(session?.user);
+      setCloudDataLoading(!!nextUser);
       setAuthUser(nextUser);
       if (nextUser) initializeLocalUserState();
       setAuthLoading(false);
@@ -335,6 +340,7 @@ export default function WorkoutGenerator() {
     const userId = authUser?.id;
     if (!userId || !supabase) {
       supabaseHydratedUserRef.current = null;
+      setCloudDataLoading(false);
       return undefined;
     }
     if (supabaseHydratedUserRef.current === userId) return undefined;
@@ -342,6 +348,9 @@ export default function WorkoutGenerator() {
     let cancelled = false;
 
     const hydrateUserData = async () => {
+      setCloudDataLoading(true);
+      setCloudDataError('');
+      let usedLocalFallback = false;
       const localLogs = loadWorkoutLogs(userId);
       const localPrograms = loadLocalProPrograms(userId);
 
@@ -352,6 +361,7 @@ export default function WorkoutGenerator() {
         }
       } catch (error) {
         console.error('[ForgeAI Supabase] profile sync failed', error);
+        usedLocalFallback = true;
       }
 
       try {
@@ -361,7 +371,9 @@ export default function WorkoutGenerator() {
         } else if (remotePrograms.length) {
           cacheLocalProPrograms(remotePrograms, userId);
         }
-        const latestProgram = remotePrograms[0]?.programData || localPrograms[0]?.programData;
+        const latestProgram = remotePrograms[0]
+          ? { ...remotePrograms[0].programData, supabaseProgramId: remotePrograms[0].id }
+          : localPrograms[0]?.programData;
         if (!cancelled && latestProgram) {
           setProGeneratedProgram(latestProgram);
           setProUnlocked(true);
@@ -370,6 +382,7 @@ export default function WorkoutGenerator() {
         }
       } catch (error) {
         console.error('[ForgeAI Supabase] program load failed; using local fallback', error);
+        usedLocalFallback = true;
         const fallbackProgram = localPrograms[0]?.programData;
         if (!cancelled && fallbackProgram) {
           setProGeneratedProgram(fallbackProgram);
@@ -396,7 +409,13 @@ export default function WorkoutGenerator() {
         }
       } catch (error) {
         console.error('[ForgeAI Supabase] workout log load failed; using local fallback', error);
+        usedLocalFallback = true;
         if (!cancelled) setWorkoutLogs(localLogs);
+      }
+
+      if (!cancelled) {
+        setCloudDataError(usedLocalFallback ? 'Some cloud data was unavailable. ForgeAI is using your saved device data.' : '');
+        setCloudDataLoading(false);
       }
     };
 
@@ -5129,7 +5148,9 @@ export default function WorkoutGenerator() {
     try {
       const cached = (programs || []).map(item => ({
         id: item.id || `local-program-${Date.now()}`,
-        programData: item.programData,
+        programData: item.id
+          ? { ...item.programData, supabaseProgramId: item.id }
+          : item.programData,
         createdAt: item.createdAt || new Date().toISOString()
       })).filter(item => item.programData).slice(0, 20);
       window.localStorage.setItem(getLocalProgramsStorageKey(userId), JSON.stringify(cached));
@@ -5142,11 +5163,16 @@ export default function WorkoutGenerator() {
     if (!program || typeof window === 'undefined') return;
     try {
       const existing = loadLocalProPrograms(userId);
+      const remaining = existing.filter(item => {
+        if (program.supabaseProgramId && item.programData?.supabaseProgramId === program.supabaseProgramId) return false;
+        if (program.generationSeed && item.programData?.generationSeed === program.generationSeed) return false;
+        return true;
+      });
       const next = [{
-        id: `local-program-${Date.now()}`,
+        id: program.supabaseProgramId || `local-program-${Date.now()}`,
         programData: program,
         createdAt: new Date().toISOString()
-      }, ...existing].slice(0, 20);
+      }, ...remaining].slice(0, 20);
       window.localStorage.setItem(getLocalProgramsStorageKey(userId), JSON.stringify(next));
     } catch (error) {
       setLogActionMessage('Program saved for this session, but local storage was unavailable.');
@@ -5157,7 +5183,14 @@ export default function WorkoutGenerator() {
     saveLocalProProgram(program, authUser?.id);
     if (!authUser?.id || !supabase) return;
     try {
-      await saveUserProgram(authUser.id, program);
+      const saved = program.supabaseProgramId
+        ? await updateUserProgram(authUser.id, program.supabaseProgramId, program)
+        : await saveUserProgram(authUser.id, program);
+      const syncedProgram = { ...program, supabaseProgramId: saved.id };
+      saveLocalProProgram(syncedProgram, authUser.id);
+      setProGeneratedProgram(current => (
+        current?.generationSeed === program.generationSeed ? syncedProgram : current
+      ));
     } catch (error) {
       console.error('[ForgeAI Supabase] program save failed; local fallback retained', error);
       setLogActionMessage('Program saved on this device and will sync when Supabase is available.');
@@ -6775,6 +6808,20 @@ export default function WorkoutGenerator() {
             </p>
           )}
         </div>
+      </div>
+    </div>
+  );
+
+  const CloudDataLoadingScreen = () => (
+    <div className="relative grid min-h-screen place-items-center overflow-hidden bg-black px-6 text-white antialiased">
+      <Background />
+      <div className="relative w-full max-w-sm rounded-[2rem] border border-amber-100/12 bg-white/[0.035] p-8 text-center shadow-[0_30px_130px_rgba(245,158,11,0.12)] backdrop-blur-2xl">
+        <div className="mx-auto grid h-16 w-16 place-items-center rounded-[1.4rem] border border-amber-100/18 bg-amber-100/[0.08] text-amber-100">
+          <Activity className="h-7 w-7 animate-pulse" />
+        </div>
+        <div className="mt-6 text-[0.64rem] font-black uppercase tracking-[0.22em] text-amber-100/60">ForgeAI Cloud</div>
+        <h1 className="mt-2 text-3xl font-black tracking-[-0.055em] text-white">Loading Your Training</h1>
+        <p className="mt-3 text-sm font-semibold leading-6 text-zinc-500">Syncing your profile, PRO programs, and workout history.</p>
       </div>
     </div>
   );
@@ -18795,12 +18842,26 @@ export default function WorkoutGenerator() {
 
   const PremiumShell = () => {
     if (!authUser) return SignupScreen();
+    if (cloudDataLoading) return CloudDataLoadingScreen();
     if (activeMovementContext) return <MovementPage context={activeMovementContext} onBack={closeMovementPage} />;
     if (isWorkoutSessionActive && isWorkoutSessionViewActive) return WorkoutSessionView();
 
     return (
     <div className="relative min-h-screen touch-pan-y overflow-x-hidden text-white antialiased">
       <Background />
+      {cloudDataError && (
+        <div className="fixed left-1/2 top-4 z-[90] flex w-[min(92vw,34rem)] -translate-x-1/2 items-center justify-between gap-4 rounded-2xl border border-amber-100/16 bg-zinc-950/92 px-4 py-3 shadow-[0_18px_70px_rgba(0,0,0,0.45)] backdrop-blur-2xl">
+          <span className="text-xs font-bold leading-5 text-amber-50/80">{cloudDataError}</span>
+          <button
+            type="button"
+            onClick={() => setCloudDataError('')}
+            aria-label="Dismiss cloud sync notice"
+            className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/10 text-zinc-400 transition hover:text-white"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
       <style>{`
         html,
         body,
