@@ -60,6 +60,17 @@ import {
 } from 'lucide-react';
 import { buildForgeCoachContext, generateGeminiResponse } from './lib/gemini';
 import { isSupabaseConfigured, supabase } from './lib/supabase';
+import {
+  deleteAllUserWorkoutLogs,
+  deleteUserWorkoutLog,
+  ensureUserProfile,
+  loadUserPrograms,
+  loadUserWorkoutLogs,
+  saveUserProgram,
+  saveUserWorkoutLog,
+  updateUserProfileName,
+  updateUserWorkoutLog
+} from './lib/forgePersistence';
 import bodybuildingProExerciseDatabase from './data/bodybuildingProExerciseDatabase.json';
 import generalFitnessProExerciseDatabase from './data/generalFitnessProExerciseDatabase.json';
 import sportPerformanceProExerciseDatabase from './data/sportPerformanceProExerciseDatabase.json';
@@ -109,6 +120,7 @@ export default function WorkoutGenerator() {
   const [authMessage, setAuthMessage] = useState('');
   const [authOAuthLoading, setAuthOAuthLoading] = useState(false);
   const usernameInputRef = useRef(null);
+  const supabaseHydratedUserRef = useRef(null);
   const [settingsProfileMessage, setSettingsProfileMessage] = useState('');
   const [settings, setSettings] = useState({
     goal: 'build-muscle',
@@ -318,6 +330,81 @@ export default function WorkoutGenerator() {
       if (['detailed', 'compact'].includes(savedLogViewMode)) setLogViewMode(savedLogViewMode);
     }
   }, []);
+
+  useEffect(() => {
+    const userId = authUser?.id;
+    if (!userId || !supabase) {
+      supabaseHydratedUserRef.current = null;
+      return undefined;
+    }
+    if (supabaseHydratedUserRef.current === userId) return undefined;
+    supabaseHydratedUserRef.current = userId;
+    let cancelled = false;
+
+    const hydrateUserData = async () => {
+      const localLogs = loadWorkoutLogs(userId);
+      const localPrograms = loadLocalProPrograms(userId);
+
+      try {
+        const profile = await ensureUserProfile(authUser.raw || authUser);
+        if (!cancelled && profile?.username) {
+          setAuthUser(current => current?.id === userId ? { ...current, name: profile.username } : current);
+        }
+      } catch (error) {
+        console.error('[ForgeAI Supabase] profile sync failed', error);
+      }
+
+      try {
+        const remotePrograms = await loadUserPrograms(userId);
+        if (!remotePrograms.length && localPrograms.length) {
+          await Promise.allSettled(localPrograms.map(item => saveUserProgram(userId, item.programData)));
+        } else if (remotePrograms.length) {
+          cacheLocalProPrograms(remotePrograms, userId);
+        }
+        const latestProgram = remotePrograms[0]?.programData || localPrograms[0]?.programData;
+        if (!cancelled && latestProgram) {
+          setProGeneratedProgram(latestProgram);
+          setProUnlocked(true);
+          setShowProGenerator(true);
+          setProStep(Number.MAX_SAFE_INTEGER);
+        }
+      } catch (error) {
+        console.error('[ForgeAI Supabase] program load failed; using local fallback', error);
+        const fallbackProgram = localPrograms[0]?.programData;
+        if (!cancelled && fallbackProgram) {
+          setProGeneratedProgram(fallbackProgram);
+          setProUnlocked(true);
+          setShowProGenerator(true);
+          setProStep(Number.MAX_SAFE_INTEGER);
+        }
+      }
+
+      try {
+        const remoteLogs = await loadUserWorkoutLogs(userId);
+        const remoteClientIds = new Set(remoteLogs.map(log => log.id).filter(Boolean));
+        const unsyncedLogs = localLogs.filter(log => log.id && !remoteClientIds.has(log.id));
+        const uploadResults = await Promise.allSettled(unsyncedLogs.map(log => saveUserWorkoutLog(userId, log)));
+        const uploadedLogs = uploadResults
+          .filter(result => result.status === 'fulfilled')
+          .map(result => result.value);
+        const mergedLogs = [...uploadedLogs, ...remoteLogs]
+          .map(normalizeWorkoutLogEntry)
+          .sort((a, b) => new Date(getLogCreatedAt(b)).getTime() - new Date(getLogCreatedAt(a)).getTime());
+        if (!cancelled) {
+          setWorkoutLogs(mergedLogs);
+          saveWorkoutLogs(mergedLogs, userId);
+        }
+      } catch (error) {
+        console.error('[ForgeAI Supabase] workout log load failed; using local fallback', error);
+        if (!cancelled) setWorkoutLogs(localLogs);
+      }
+    };
+
+    void hydrateUserData();
+    return () => {
+      cancelled = true;
+    };
+  }, [authUser?.id]);
 
   useEffect(() => {
     if (!showSettingsScreen) {
@@ -4601,11 +4688,26 @@ export default function WorkoutGenerator() {
     comments: Array.isArray(entry.comments) ? entry.comments : []
   });
 
-  const loadWorkoutLogs = () => {
+  const getWorkoutLogsStorageKey = (userId = authUser?.id) => (
+    userId ? `forgeai_workout_logs_${userId}` : 'forgeai_workout_logs'
+  );
+
+  const loadWorkoutLogs = (userId = authUser?.id) => {
     if (typeof window === 'undefined') return [];
 
     try {
-      const raw = window.localStorage.getItem('forgeai_workout_logs');
+      const storageKey = getWorkoutLogsStorageKey(userId);
+      let raw = window.localStorage.getItem(storageKey);
+      if (!raw && userId) {
+        const legacyOwnerKey = 'forgeai_legacy_logs_owner';
+        const legacyOwner = window.localStorage.getItem(legacyOwnerKey);
+        const legacyRaw = window.localStorage.getItem('forgeai_workout_logs');
+        if (legacyRaw && (!legacyOwner || legacyOwner === userId)) {
+          window.localStorage.setItem(legacyOwnerKey, userId);
+          window.localStorage.setItem(storageKey, legacyRaw);
+          raw = legacyRaw;
+        }
+      }
       const parsed = raw ? JSON.parse(raw) : [];
       return Array.isArray(parsed) ? parsed.map(normalizeWorkoutLogEntry) : [];
     } catch (error) {
@@ -4613,18 +4715,24 @@ export default function WorkoutGenerator() {
     }
   };
 
-  const saveWorkoutLogs = (logs) => {
+  const saveWorkoutLogs = (logs, userId = authUser?.id) => {
     if (typeof window === 'undefined') return;
 
     try {
-      window.localStorage.setItem('forgeai_workout_logs', JSON.stringify((logs || []).map(normalizeWorkoutLogEntry)));
+      window.localStorage.setItem(getWorkoutLogsStorageKey(userId), JSON.stringify((logs || []).map(normalizeWorkoutLogEntry)));
     } catch (error) {
       setLogActionMessage('Workout saved in this session, but local storage was unavailable.');
     }
   };
 
   const persistWorkoutLogs = (updatedLogs) => {
-    saveWorkoutLogs(updatedLogs);
+    saveWorkoutLogs(updatedLogs, authUser?.id);
+    if (!authUser?.id || !supabase) return;
+    void Promise.allSettled(
+      (updatedLogs || [])
+        .filter(log => log.supabaseId)
+        .map(log => updateUserWorkoutLog(authUser.id, log))
+    );
   };
 
   const rankTiers = [
@@ -5001,6 +5109,77 @@ export default function WorkoutGenerator() {
     }
   };
 
+  const getLocalProgramsStorageKey = (userId = authUser?.id) => (
+    `forgeai_pro_programs_${userId || 'local'}`
+  );
+
+  const loadLocalProPrograms = (userId = authUser?.id) => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const raw = window.localStorage.getItem(getLocalProgramsStorageKey(userId));
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed.filter(item => item?.programData) : [];
+    } catch (error) {
+      return [];
+    }
+  };
+
+  const cacheLocalProPrograms = (programs, userId = authUser?.id) => {
+    if (typeof window === 'undefined') return;
+    try {
+      const cached = (programs || []).map(item => ({
+        id: item.id || `local-program-${Date.now()}`,
+        programData: item.programData,
+        createdAt: item.createdAt || new Date().toISOString()
+      })).filter(item => item.programData).slice(0, 20);
+      window.localStorage.setItem(getLocalProgramsStorageKey(userId), JSON.stringify(cached));
+    } catch (error) {
+      setLogActionMessage('Programs loaded from Supabase, but local fallback caching was unavailable.');
+    }
+  };
+
+  const saveLocalProProgram = (program, userId = authUser?.id) => {
+    if (!program || typeof window === 'undefined') return;
+    try {
+      const existing = loadLocalProPrograms(userId);
+      const next = [{
+        id: `local-program-${Date.now()}`,
+        programData: program,
+        createdAt: new Date().toISOString()
+      }, ...existing].slice(0, 20);
+      window.localStorage.setItem(getLocalProgramsStorageKey(userId), JSON.stringify(next));
+    } catch (error) {
+      setLogActionMessage('Program saved for this session, but local storage was unavailable.');
+    }
+  };
+
+  const persistGeneratedProProgram = async (program) => {
+    saveLocalProProgram(program, authUser?.id);
+    if (!authUser?.id || !supabase) return;
+    try {
+      await saveUserProgram(authUser.id, program);
+    } catch (error) {
+      console.error('[ForgeAI Supabase] program save failed; local fallback retained', error);
+      setLogActionMessage('Program saved on this device and will sync when Supabase is available.');
+    }
+  };
+
+  const persistCompletedWorkoutLog = async (entry) => {
+    if (!entry || !authUser?.id || !supabase) return;
+    try {
+      const syncedEntry = normalizeWorkoutLogEntry(await saveUserWorkoutLog(authUser.id, entry));
+      setWorkoutLogs(currentLogs => {
+        const nextLogs = currentLogs.map(log => log.id === entry.id ? syncedEntry : log);
+        saveWorkoutLogs(nextLogs, authUser.id);
+        return nextLogs;
+      });
+      setActiveSessionSummary(current => current?.id === entry.id ? syncedEntry : current);
+    } catch (error) {
+      console.error('[ForgeAI Supabase] workout save failed; local fallback retained', error);
+      setLogActionMessage('Workout saved on this device and will sync when Supabase is available.');
+    }
+  };
+
   const handleGoogleSignIn = async () => {
     setAuthMessage('');
 
@@ -5042,7 +5221,8 @@ export default function WorkoutGenerator() {
     setActiveTab('workout');
     setAiMenuOpen(false);
     setActiveAIModule('coach');
-    // Sign out only clears the Supabase session. Workout logs, XP, settings, and PRO data remain on this device for now.
+    supabaseHydratedUserRef.current = null;
+    // Sign out clears only the Supabase session. Per-user local fallback data remains on this device.
   };
 
   const handleSaveUsername = async (inputValue = usernameInputRef.current?.value) => {
@@ -5071,6 +5251,12 @@ export default function WorkoutGenerator() {
       });
       if (error) {
         setSettingsProfileMessage(error.message || 'Could not update username.');
+        return;
+      }
+      try {
+        await updateUserProfileName(authUser?.id, cleanName);
+      } catch (error) {
+        setSettingsProfileMessage(error?.message || 'Username updated in Auth but not in the profile table.');
         return;
       }
     }
@@ -6376,16 +6562,15 @@ export default function WorkoutGenerator() {
     const stats = calculateSessionStats(setLogs);
     if (stats.completedSets === 0) return;
 
-    setWorkoutLogs(currentLogs => {
-      const nextEntry = createWorkoutLogEntry(currentLogs);
-      const nextLogs = [nextEntry, ...currentLogs];
-      saveWorkoutLogs(nextLogs);
-      awardWorkoutCompletionReward(nextEntry.id);
-      setActiveSessionSummary(nextEntry);
-      setSelectedLogEntry(null);
-      setActiveTab('log');
-      return nextLogs;
-    });
+    const nextEntry = createWorkoutLogEntry(workoutLogs);
+    const nextLogs = [nextEntry, ...workoutLogs];
+    setWorkoutLogs(nextLogs);
+    saveWorkoutLogs(nextLogs, authUser?.id);
+    void persistCompletedWorkoutLog(nextEntry);
+    awardWorkoutCompletionReward(nextEntry.id);
+    setActiveSessionSummary(nextEntry);
+    setSelectedLogEntry(null);
+    setActiveTab('log');
 
     endWorkoutSession();
   };
@@ -7747,7 +7932,13 @@ export default function WorkoutGenerator() {
     };
 
     const deleteWorkoutLog = (entryId) => {
-      // Future backend version should recalculate XP/rank effects or mark deleted logs as archived.
+      const targetLog = workoutLogs.find(log => log.id === entryId);
+      if (authUser?.id && targetLog?.supabaseId) {
+        void deleteUserWorkoutLog(authUser.id, targetLog.supabaseId).catch(error => {
+          console.error('[ForgeAI Supabase] workout delete failed', error);
+          setLogActionMessage('Workout deleted on this device, but cloud deletion failed.');
+        });
+      }
       setWorkoutLogs(currentLogs => {
         const nextLogs = currentLogs.filter(log => log.id !== entryId).map(normalizeWorkoutLogEntry);
         persistWorkoutLogs(nextLogs);
@@ -7973,7 +8164,12 @@ export default function WorkoutGenerator() {
     };
 
     const deleteAllWorkoutLogs = () => {
-      // Future backend version should recalculate XP/rank effects or mark deleted logs as archived.
+      if (authUser?.id) {
+        void deleteAllUserWorkoutLogs(authUser.id).catch(error => {
+          console.error('[ForgeAI Supabase] workout history delete failed', error);
+          setLogActionMessage('History cleared on this device, but cloud deletion failed.');
+        });
+      }
       setWorkoutLogs([]);
       persistWorkoutLogs([]);
       setSelectedLogEntry(null);
@@ -15174,6 +15370,7 @@ export default function WorkoutGenerator() {
       };
 
       setProGeneratedProgram(generated);
+      void persistGeneratedProProgram(generated);
       setExpandedWeek(1);
       setExpandedDay('1-0');
       setProStep(paywallStep + 1);
