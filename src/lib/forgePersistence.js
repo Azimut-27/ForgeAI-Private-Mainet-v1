@@ -89,14 +89,37 @@ export const saveUserProgram = async (userId, program) => {
   if (!userId || !program) throw new Error('A user and program are required.');
   const client = requireSupabase();
   const name = `${program.sport || 'ForgeAI PRO'}${program.durationWeeks ? ` - ${program.durationWeeks} Weeks` : ''}`;
+  const programData = { ...program };
+  delete programData.supabaseProgramId;
   const { data, error } = await client
     .from('programs')
     .insert({
       user_id: userId,
       name,
       sport: program.sport || null,
-      program_data: program
+      program_data: programData
     })
+    .select('id, user_id, name, sport, program_data, created_at')
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const updateUserProgram = async (userId, programId, program) => {
+  if (!userId || !programId || !program) throw new Error('A user, program id, and program are required.');
+  const client = requireSupabase();
+  const name = `${program.sport || 'ForgeAI PRO'}${program.durationWeeks ? ` - ${program.durationWeeks} Weeks` : ''}`;
+  const programData = { ...program };
+  delete programData.supabaseProgramId;
+  const { data, error } = await client
+    .from('programs')
+    .update({
+      name,
+      sport: program.sport || null,
+      program_data: programData
+    })
+    .eq('id', programId)
+    .eq('user_id', userId)
     .select('id, user_id, name, sport, program_data, created_at')
     .single();
   if (error) throw error;
