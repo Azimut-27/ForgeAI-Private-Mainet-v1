@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #18181b;
+}
+
+.forge-username-input {
+  color: #ffffff !important;
+  background-color: rgba(0, 0, 0, 0.34) !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.forge-username-input::placeholder {
+  color: rgba(161, 161, 170, 0.72) !important;
+  -webkit-text-fill-color: rgba(161, 161, 170, 0.72) !important;
+}
+
+html[data-forge-theme="white"],
+html[data-forge-theme="white"] body {
+  background: #f7f1e7;
+  color: #18181b;
+}
+
+html[data-forge-theme="white"] [class*="bg-black"],
+html[data-forge-theme="white"] [class*="bg-zinc-950"] {
+  background-color: rgba(255, 252, 244, 0.78) !important;
+}
+
+html[data-forge-theme="white"] [class*="bg-[#050506]"] {
+  background-color: #f7f1e7 !important;
+}
+
+html[data-forge-theme="white"] .premium-card,
+html[data-forge-theme="white"] .workout-card,
+html[data-forge-theme="white"] .prestige-rank-card {
+  background-color: rgba(255, 252, 244, 0.78) !important;
+  border-color: rgba(120, 78, 18, 0.16) !important;
+  box-shadow: 0 22px 80px rgba(120, 78, 18, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.78) !important;
+}
+
+html[data-forge-theme="white"] [class*="border-white"] {
+  border-color: rgba(39, 39, 42, 0.12) !important;
+}
+
+html[data-forge-theme="white"] [class*="text-white"],
+html[data-forge-theme="white"] [class*="text-zinc-100"],
+html[data-forge-theme="white"] [class*="text-zinc-200"],
+html[data-forge-theme="white"] [class*="text-zinc-300"] {
+  color: #18181b !important;
+}
+
+html[data-forge-theme="white"] [class*="text-zinc-400"],
+html[data-forge-theme="white"] [class*="text-zinc-500"],
+html[data-forge-theme="white"] [class*="text-zinc-600"] {
+  color: #68635b !important;
+}
+
+html[data-forge-theme="white"] [class*="text-amber-100"],
+html[data-forge-theme="white"] [class*="text-amber-200"],
+html[data-forge-theme="white"] [class*="text-orange-"] {
+  color: #9a5c00 !important;
+}
+
+html[data-forge-theme="white"] input,
+html[data-forge-theme="white"] textarea,
+html[data-forge-theme="white"] select {
+  color: #18181b !important;
+  background-color: rgba(255, 252, 244, 0.82) !important;
+  border-color: rgba(39, 39, 42, 0.14) !important;
+}
+
+html[data-forge-theme="white"] input::placeholder,
+html[data-forge-theme="white"] textarea::placeholder {
+  color: rgba(104, 99, 91, 0.72) !important;
+}
+
+html[data-forge-theme="white"] .forge-username-input {
+  color: #18181b !important;
+  background-color: rgba(255, 252, 244, 0.88) !important;
+  -webkit-text-fill-color: #18181b !important;
+}
+
+html[data-forge-theme="white"] .forge-username-input::placeholder {
+  color: rgba(104, 99, 91, 0.72) !important;
+  -webkit-text-fill-color: rgba(104, 99, 91, 0.72) !important;
+}
+
+html[data-forge-theme="white"] [class*="backdrop-blur"] {
+  backdrop-filter: blur(22px) saturate(1.1);
+}
+
+html[data-forge-theme="white"] [class*="shadow-[0_"],
+html[data-forge-theme="white"] [class*="shadow-[inset"] {
+  --tw-shadow-color: rgba(120, 78, 18, 0.12) !important;
+}
+
+html[data-forge-theme="white"] .forge-dark-island,
+html[data-forge-theme="white"] .forge-dark-island [class*="bg-black"],
+html[data-forge-theme="white"] .forge-dark-island [class*="bg-zinc-"],
+html[data-forge-theme="white"] .forge-dark-island [class*="bg-[#050507]"] {
+  background-color: #050507 !important;
+}
+
+html[data-forge-theme="white"] .forge-dark-island [class*="bg-white"] {
+  background-color: #ffffff !important;
+}
+
+html[data-forge-theme="white"] .forge-dark-island [class*="text-white"],
+html[data-forge-theme="white"] .forge-dark-island [class*="text-zinc-100"],
+html[data-forge-theme="white"] .forge-dark-island [class*="text-zinc-200"],
+html[data-forge-theme="white"] .forge-dark-island [class*="text-zinc-300"] {
+  color: #f8fafc !important;
+}
+
+html[data-forge-theme="white"] .forge-dark-island [class*="text-zinc-400"],
+html[data-forge-theme="white"] .forge-dark-island [class*="text-zinc-500"],
+html[data-forge-theme="white"] .forge-dark-island [class*="text-zinc-600"] {
+  color: #a1a1aa !important;
+}
+
+html[data-forge-theme="white"] .forge-dark-island [class*="text-amber-100"],
+html[data-forge-theme="white"] .forge-dark-island [class*="text-amber-200"],
+html[data-forge-theme="white"] .forge-dark-island [class*="text-orange-"],
+html[data-forge-theme="white"] .forge-dark-island [class*="text-yellow-"] {
+  color: #fbbf24 !important;
+}
+
+html[data-forge-theme="white"] .forge-dark-island [class*="text-black"],
+html[data-forge-theme="white"] .forge-dark-island button[class*="bg-white"] {
+  color: #050507 !important;
+}
+
+html[data-forge-theme="white"] .forge-dark-island [class*="border-white"] {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
