@@ -1,0 +1,1122 @@
+[
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Loaded Core",
+    "exercise": "Back Squat",
+    "tier": "Main",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Squat / Knee Dominant",
+    "fatigueCost": "High",
+    "notes": "Imported from Exercises General Fitness row 5. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Loaded Core",
+    "exercise": "Squat Jumps",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Squat / Knee Dominant",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 6. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Squat Pattern",
+    "exercise": "Heel-Elevated Back Squat",
+    "tier": "Main",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Squat / Knee Dominant",
+    "fatigueCost": "High",
+    "notes": "Imported from Exercises General Fitness row 7. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Squat Pattern",
+    "exercise": "Pin Squat",
+    "tier": "Main",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Squat / Knee Dominant",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 8. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Squat Pattern",
+    "exercise": "Box Back Squat",
+    "tier": "Main",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Squat / Knee Dominant",
+    "fatigueCost": "High",
+    "notes": "Imported from Exercises General Fitness row 9. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Unilateral",
+    "exercise": "Bulgarian Split Squat with Dumbbells",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Squat / Knee Dominant",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 10. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Unilateral",
+    "exercise": "Bulgarian Split Squat with Kettlebells",
+    "tier": "Secondary",
+    "equipment": "Kettlebell",
+    "pattern": "Squat / Knee Dominant",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 11. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Unilateral",
+    "exercise": "Barbell Bulgarian Split Squat",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Squat / Knee Dominant",
+    "fatigueCost": "High",
+    "notes": "Imported from Exercises General Fitness row 12. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Unilateral",
+    "exercise": "Front-Rack Bulgarian Split Squat",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Squat / Knee Dominant",
+    "fatigueCost": "High",
+    "notes": "Imported from Exercises General Fitness row 13. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Squat Pattern",
+    "exercise": "Belt Squat",
+    "tier": "Secondary",
+    "equipment": "Machine",
+    "pattern": "Squat / Knee Dominant",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 14. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Squat Pattern",
+    "exercise": "Leg Press",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Push",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 15. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Squat Pattern",
+    "exercise": "Farmer Walk",
+    "tier": "Secondary",
+    "equipment": "Dumbbells / Kettlebells",
+    "pattern": "Loaded Carry",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 16. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Squat Pattern",
+    "exercise": "Single-Arm Farmer Walk",
+    "tier": "Secondary",
+    "equipment": "Dumbbells / Kettlebells",
+    "pattern": "Loaded Carry",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 17. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Squat Pattern",
+    "exercise": "Hack Squat",
+    "tier": "Secondary",
+    "equipment": "Machine",
+    "pattern": "Squat / Knee Dominant",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 18. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Squat Pattern",
+    "exercise": "Front Squat",
+    "tier": "Main",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Squat / Knee Dominant",
+    "fatigueCost": "High",
+    "notes": "Imported from Exercises General Fitness row 19. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Squat Pattern",
+    "exercise": "Heel-Elevated Front Squat",
+    "tier": "Main",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Squat / Knee Dominant",
+    "fatigueCost": "High",
+    "notes": "Imported from Exercises General Fitness row 20. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Squat Pattern",
+    "exercise": "Leg Extension",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Elbow Extension",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 21. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Sled / Knee Health",
+    "exercise": "Sled Push",
+    "tier": "Secondary",
+    "equipment": "Sled",
+    "pattern": "Push",
+    "fatigueCost": "High",
+    "notes": "Imported from Exercises General Fitness row 22. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Sled / Knee Health",
+    "exercise": "Backward Sled Drag",
+    "tier": "Secondary",
+    "equipment": "Sled",
+    "pattern": "Loaded Locomotion",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 23. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Unilateral",
+    "exercise": "Poliquin Step-Up",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Squat / Knee Dominant",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 24. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Quads",
+    "subgroup": "Unilateral",
+    "exercise": "Peterson Step-Up",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Squat / Knee Dominant",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 25. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Posterior Chain",
+    "subgroup": "Hip Hinge",
+    "exercise": "Deadlift",
+    "tier": "Main",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Hip Hinge",
+    "fatigueCost": "High",
+    "notes": "Imported from Exercises General Fitness row 28. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Posterior Chain",
+    "subgroup": "Hip Hinge",
+    "exercise": "Romanian Deadlift",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Hip Hinge",
+    "fatigueCost": "High",
+    "notes": "Imported from Exercises General Fitness row 29. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Posterior Chain",
+    "subgroup": "Hip Hinge",
+    "exercise": "Stiff Leg Deadlift",
+    "tier": "Main",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Hip Hinge",
+    "fatigueCost": "High",
+    "notes": "Imported from Exercises General Fitness row 30. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Posterior Chain",
+    "subgroup": "Hip Hinge",
+    "exercise": "Rack Pull Deadlift",
+    "tier": "Main",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Vertical Pull",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 31. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Posterior Chain",
+    "subgroup": "Hip Hinge",
+    "exercise": "Single-Leg RDL",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Hip Hinge",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 32. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Hamstrings",
+    "subgroup": "Knee Flexion",
+    "exercise": "Lying Leg Curl",
+    "tier": "Secondary",
+    "equipment": "Machine",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 33. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Posterior Chain",
+    "subgroup": "Hip Hinge",
+    "exercise": "Glute-Ham Raise",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Shoulder Raise",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 34. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Posterior Chain",
+    "subgroup": "Hip Hinge",
+    "exercise": "Dumbbell Back Extension",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Elbow Extension",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 35. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Posterior Chain",
+    "subgroup": "Hip Hinge",
+    "exercise": "Good Morning",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Hip Hinge",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 36. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Posterior Chain",
+    "subgroup": "Hip Hinge",
+    "exercise": "Seated Good Morning",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Hip Hinge",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 37. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Calves",
+    "subgroup": "Calves",
+    "exercise": "Standing Calf Raise",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Ankle Extension",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 38. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Calves",
+    "subgroup": "Calves",
+    "exercise": "Seated Calf Raise",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Ankle Extension",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 39. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Calves",
+    "subgroup": "Calves",
+    "exercise": "Dumbbell Seated Calf Raise",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Ankle Extension",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 40. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Posterior Chain",
+    "subgroup": "Hip Hinge",
+    "exercise": "Reverse Hyper",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Hip Hinge",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 41. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Posterior Chain",
+    "subgroup": "Hip Hinge",
+    "exercise": "Trap Bar Deadlift",
+    "tier": "Main",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Hip Hinge",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 42. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Posterior Chain",
+    "subgroup": "Hip Hinge",
+    "exercise": "Snatch-Grip Back Extension",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Elbow Extension",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 44. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Posterior Chain",
+    "subgroup": "Hip Hinge",
+    "exercise": "Single-Leg Back Extension",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Elbow Extension",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 45. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Power / Athletic",
+    "subgroup": "Power Pull",
+    "exercise": "Power Clean",
+    "tier": "Main",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Power Pull",
+    "fatigueCost": "High",
+    "notes": "Imported from Exercises General Fitness row 46. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Power / Athletic",
+    "subgroup": "Power Pull",
+    "exercise": "Hang Power Clean",
+    "tier": "Main",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Power Pull",
+    "fatigueCost": "High",
+    "notes": "Imported from Exercises General Fitness row 47. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Anti-Extension",
+    "exercise": "Weighted Plank",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Anti-Extension",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 52. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Anti-Extension",
+    "exercise": "Ab Wheel Rollout",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Anti-Extension",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 53. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Anti-Extension",
+    "exercise": "Swiss Ball Plank",
+    "tier": "Secondary",
+    "equipment": "Swiss Ball / Full Gym",
+    "pattern": "Anti-Extension",
+    "fatigueCost": "Low",
+    "notes": "Core stability and anti-extension control for General Fitness PRO."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Flexion",
+    "exercise": "Hanging Leg Raise",
+    "tier": "Secondary",
+    "equipment": "Bodyweight / Bar",
+    "pattern": "Shoulder Raise",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 54. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Rotation",
+    "exercise": "Russian Twist",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Rotation",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 55. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Flexion",
+    "exercise": "Swiss Ball Sit-Up",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Flexion",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 56. Source section: Squat Day."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Horizontal Press",
+    "exercise": "Bench Press",
+    "tier": "Main",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Push",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 60. Source section: Chest."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Horizontal Press",
+    "exercise": "Weighted Push-Up",
+    "tier": "Secondary",
+    "equipment": "Bodyweight / Bar",
+    "pattern": "Push",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 61. Source section: Chest."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Upper Chest",
+    "exercise": "Incline Dumbbell Press",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Upper Chest",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 62. Source section: Chest."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Fly / Isolation",
+    "exercise": "Incline Dumbbell Fly",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Fly / Isolation",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 63. Source section: Chest."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Horizontal Press",
+    "exercise": "Plate-Loaded Chest Press",
+    "tier": "Main",
+    "equipment": "Machine",
+    "pattern": "Push",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 64. Source section: Chest."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Lower Chest",
+    "exercise": "Chest Dip (Lean Forward)",
+    "tier": "Secondary",
+    "equipment": "Bodyweight / Bar",
+    "pattern": "Push",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 65. Source section: Chest."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Fly / Isolation",
+    "exercise": "Dumbbell Chest Fly",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Fly / Isolation",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 66. Source section: Chest."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Fly / Isolation",
+    "exercise": "Cable Flyes",
+    "tier": "Secondary",
+    "equipment": "Cable",
+    "pattern": "Fly / Isolation",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 67. Source section: Chest."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Lower Chest",
+    "exercise": "Decline Push-Up",
+    "tier": "Secondary",
+    "equipment": "Bodyweight / Bar",
+    "pattern": "Push",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 68. Source section: Chest."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Fly / Isolation",
+    "exercise": "Pec Deck Fly",
+    "tier": "Secondary",
+    "equipment": "Machine",
+    "pattern": "Fly / Isolation",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 69. Source section: Chest."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Vertical Pull",
+    "exercise": "Pull-Up",
+    "tier": "Main",
+    "equipment": "Bodyweight / Bar",
+    "pattern": "Vertical Pull",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 74. Source section: Back."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Vertical Pull",
+    "exercise": "Neutral-Grip Pull-Up",
+    "tier": "Main",
+    "equipment": "Bodyweight / Bar",
+    "pattern": "Vertical Pull",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 75. Source section: Back."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Vertical Pull",
+    "exercise": "Lat Pulldown",
+    "tier": "Secondary",
+    "equipment": "Machine",
+    "pattern": "Vertical Pull",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 76. Source section: Back."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Horizontal Row",
+    "exercise": "T-Bar Row",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Horizontal Pull",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 77. Source section: Back."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Horizontal Row",
+    "exercise": "Pendlay Row",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Horizontal Pull",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 78. Source section: Back."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Horizontal Row",
+    "exercise": "Chest-Supported Row",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Horizontal Pull",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 79. Source section: Back."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Horizontal Row",
+    "exercise": "One-Arm Dumbbell Row",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Horizontal Pull",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 80. Source section: Back."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Vertical Pull",
+    "exercise": "Band Pull-Apart",
+    "tier": "Secondary",
+    "equipment": "Band",
+    "pattern": "Vertical Pull",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 81. Source section: Back."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Upper Back / Rear Delt",
+    "exercise": "Y-T-W Raise",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Shoulder Raise",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 82. Source section: Back."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Horizontal Row",
+    "exercise": "Cable Row",
+    "tier": "Secondary",
+    "equipment": "Cable",
+    "pattern": "Horizontal Pull",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 83. Source section: Back."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Horizontal Row",
+    "exercise": "Incline Dumbbell Row",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Horizontal Pull",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 84. Source section: Back."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Vertical Pull",
+    "exercise": "Band Face Pull",
+    "tier": "Secondary",
+    "equipment": "Band",
+    "pattern": "Vertical Pull",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 85. Source section: Back."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Standard Curl",
+    "exercise": "Chin-Up",
+    "tier": "Main",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Standard Curl",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 90. Source section: ARMS."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Pulling / Biceps",
+    "exercise": "Close-Grip Chin-Up",
+    "tier": "Main",
+    "equipment": "Bodyweight / Bar",
+    "pattern": "Vertical Pull",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 91. Source section: ARMS."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Brachialis / Hammer",
+    "exercise": "Hammer Curl",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 92. Source section: ARMS."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Standard Curl",
+    "exercise": "Dumbbell Curl",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 93. Source section: ARMS."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Standard Curl",
+    "exercise": "Barbell Curl",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 94. Source section: ARMS."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Standard Curl",
+    "exercise": "Incline Dumbbell Curl",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 95. Source section: ARMS."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Brachialis / Hammer",
+    "exercise": "Cross-Body Hammer Curl",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 96. Source section: ARMS."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Standard Curl",
+    "exercise": "Zottman Curl",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 97. Source section: ARMS."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Preacher / Supported",
+    "exercise": "Concentration Curl",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 98. Source section: ARMS."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Standard Curl",
+    "exercise": "Drag Curl",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 99. Source section: ARMS."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Pulling / Biceps",
+    "exercise": "Supinated Close-Grip Lat Pulldown",
+    "tier": "Main / Secondary",
+    "equipment": "Machine",
+    "pattern": "Vertical Pull",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 100. Source section: ARMS."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Preacher / Supported",
+    "exercise": "One-Arm Preacher Curl",
+    "tier": "Main / Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 101. Source section: ARMS."
+  },
+  {
+    "muscleGroup": "Biceps",
+    "subgroup": "Preacher / Supported",
+    "exercise": "Preacher Curl",
+    "tier": "Main",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 102. Source section: ARMS."
+  },
+  {
+    "muscleGroup": "Forearms",
+    "subgroup": "Forearm Flexion / Extension",
+    "exercise": "Dumbbell Wrist Curl",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 104. Source section: Forearms."
+  },
+  {
+    "muscleGroup": "Forearms",
+    "subgroup": "Forearm Flexion / Extension",
+    "exercise": "Dumbbell Reverse Preacher Wrist Curl",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 105. Source section: Forearms."
+  },
+  {
+    "muscleGroup": "Forearms",
+    "subgroup": "Forearm Flexion / Extension",
+    "exercise": "Reverse Barbell Curl",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Elbow Flexion",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 106. Source section: Forearms."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Pressing",
+    "exercise": "Close-Grip Bench Press",
+    "tier": "Main",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Push",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 110. Source section: Triceps."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Pressing",
+    "exercise": "Weighted V Dips (Torso Upright)",
+    "tier": "Main / Secondary",
+    "equipment": "Bodyweight / Bar",
+    "pattern": "Push",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 111. Source section: Triceps."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Pushdown / Extension",
+    "exercise": "Cable Pushdown",
+    "tier": "Secondary",
+    "equipment": "Cable",
+    "pattern": "Push",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 112. Source section: Triceps."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Pushdown / Extension",
+    "exercise": "EZ-Bar Skull Crusher",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Elbow Extension",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 113. Source section: Triceps."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Pushdown / Extension",
+    "exercise": "Tate Press",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Push",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 114. Source section: Triceps."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Pushdown / Extension",
+    "exercise": "JM Press",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Push",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 115. Source section: Triceps."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Overhead Extension",
+    "exercise": "Incline Dumbbell Triceps Extension",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Elbow Extension",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 116. Source section: Triceps."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Pushdown / Extension",
+    "exercise": "Dumbbell Kickback",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Elbow Extension",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 117. Source section: Triceps."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Pressing",
+    "exercise": "Diamond Push-Ups",
+    "tier": "Secondary",
+    "equipment": "Bodyweight / Bar",
+    "pattern": "Push",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 118. Source section: Triceps."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Overhead Extension",
+    "exercise": "Seated Dumbbell French Press",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Push",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 119. Source section: Triceps."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Pushdown / Extension",
+    "exercise": "California Press",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Push",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 120. Source section: Triceps."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Pressing",
+    "exercise": "Barbell Overhead Press",
+    "tier": "Main",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Push",
+    "fatigueCost": "Moderate",
+    "notes": "Imported from Exercises General Fitness row 122. Source section: Shoulders."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Pressing",
+    "exercise": "Dumbbell Shoulder Press",
+    "tier": "Main / Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Push",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 123. Source section: Shoulders."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Pressing",
+    "exercise": "Behind-the-Neck Overhead Press (Seated)",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Push",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 124. Source section: Shoulders."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Side Delts",
+    "exercise": "Poliquin Raise",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Shoulder Raise",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 125. Source section: Shoulders."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Rear Delts / Rotator Cuff",
+    "exercise": "Seated Dumbbell External Rotation",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Rear Delts / Rotator Cuff",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 126. Source section: Shoulders."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Rear Delts / Rotator Cuff",
+    "exercise": "Bent-Over Dumbbell Rear Delt Raise",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Shoulder Raise",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 127. Source section: Shoulders."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Rear Delts / Rotator Cuff",
+    "exercise": "Internal Rotation (Cable / Band)",
+    "tier": "Secondary",
+    "equipment": "Cable",
+    "pattern": "Rear Delts / Rotator Cuff",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 128. Source section: Shoulders."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Pressing",
+    "exercise": "Dumbbell Arnold Press",
+    "tier": "Secondary",
+    "equipment": "Dumbbells",
+    "pattern": "Push",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 129. Source section: Shoulders."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Rear Delts / Rotator Cuff",
+    "exercise": "Chest-Supported Rear Delt Raise",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Shoulder Raise",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 130. Source section: Shoulders."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Side Delts",
+    "exercise": "Leaning Lateral Raise",
+    "tier": "Secondary",
+    "equipment": "Barbell / Full Gym",
+    "pattern": "Shoulder Raise",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 131. Source section: Shoulders."
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "subgroup": "Pressing",
+    "exercise": "Landmine Press",
+    "tier": "Secondary",
+    "equipment": "Landmine / Barbell",
+    "pattern": "Push",
+    "fatigueCost": "Low",
+    "notes": "Imported from Exercises General Fitness row 132. Source section: Shoulders."
+  },
+  {
+    "muscleGroup": "Chest",
+    "subgroup": "Horizontal Press",
+    "exercise": "Incline Push-Up",
+    "tier": "Secondary",
+    "equipment": "Bodyweight / Bench",
+    "pattern": "Push",
+    "fatigueCost": "Low",
+    "notes": "Added for Fat Loss PRO as an easier push-up progression."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Vertical Pull",
+    "exercise": "Pull-Up",
+    "tier": "Main / Secondary",
+    "equipment": "Pull-Up Bar",
+    "pattern": "Vertical Pull",
+    "fatigueCost": "Moderate",
+    "notes": "Added for Fat Loss PRO vertical-pull variety."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Vertical Pull",
+    "exercise": "Neutral-Grip Pull-Up",
+    "tier": "Main / Secondary",
+    "equipment": "Pull-Up Bar",
+    "pattern": "Vertical Pull",
+    "fatigueCost": "Moderate",
+    "notes": "Added for Fat Loss PRO vertical-pull variety."
+  },
+  {
+    "muscleGroup": "Back",
+    "subgroup": "Vertical Pull",
+    "exercise": "Band Assisted Pull-Up",
+    "tier": "Secondary",
+    "equipment": "Pull-Up Bar / Band",
+    "pattern": "Vertical Pull",
+    "fatigueCost": "Low",
+    "notes": "Added for Fat Loss PRO as a scalable pull-up progression."
+  },
+  {
+    "muscleGroup": "Abs",
+    "subgroup": "Anti-Extension",
+    "exercise": "Dead Bug",
+    "tier": "Secondary",
+    "equipment": "Bodyweight",
+    "pattern": "Anti-Extension",
+    "fatigueCost": "Low",
+    "notes": "Added for Fat Loss PRO as an accessible core stability exercise."
+  },
+  {
+    "muscleGroup": "Triceps",
+    "subgroup": "Pressing",
+    "exercise": "Assisted Dips",
+    "tier": "Secondary",
+    "equipment": "Assisted Dip Machine / Band",
+    "pattern": "Push",
+    "fatigueCost": "Low",
+    "notes": "Added for Fat Loss PRO as a scalable dip progression."
+  }
+]
