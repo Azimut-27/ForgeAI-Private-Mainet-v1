@@ -41,6 +41,15 @@ export const updateUserProfileName = async (userId, username, email = null) => {
   const cleanUsername = String(username || '').trim().replace(/\s+/g, ' ');
   if (!cleanUsername) throw new Error('A username is required.');
 
+  const { data: rpcData, error: rpcError } = await client.rpc('update_forgeai_username', {
+    new_username: cleanUsername
+  });
+
+  if (!rpcError) return rpcData;
+
+  // Keep compatibility while the SQL migration is being deployed.
+  if (!['PGRST202', '42883'].includes(rpcError.code)) throw rpcError;
+
   const { data, error } = await client
     .from('profiles')
     .upsert({
