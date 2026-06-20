@@ -5268,10 +5268,14 @@ export default function WorkoutGenerator() {
   };
 
   const persistCompletedWorkoutLog = async (entry) => {
-    if (!entry) return;
+    if (!entry) return null;
+    if (entry.id && cloudLogSyncInFlightRef.current.has(entry.id)) return null;
+    if (entry.id) cloudLogSyncInFlightRef.current.add(entry.id);
     if (!supabase) {
-      setCloudDataError('Cloud workout sync is unavailable because Supabase is not configured.');
-      return;
+      const error = new Error('Cloud workout sync is unavailable because Supabase is not configured.');
+      setCloudDataError(error.message);
+      if (entry.id) cloudLogSyncInFlightRef.current.delete(entry.id);
+      throw error;
     }
     try {
       const sessionUser = await getAuthenticatedSupabaseUser();
@@ -5288,11 +5292,14 @@ export default function WorkoutGenerator() {
       });
       setActiveSessionSummary(current => current?.id === entry.id ? syncedEntry : current);
       setCloudDataError('');
+      return syncedEntry;
     } catch (error) {
-      console.error('ForgeAI workout log save failed', error);
       const message = error?.message || 'Unknown Supabase error.';
       setCloudDataError(`Cloud workout sync failed: ${message}`);
       setLogActionMessage(`Workout saved on this device. Cloud sync failed: ${message}`);
+      throw error;
+    } finally {
+      if (entry.id) cloudLogSyncInFlightRef.current.delete(entry.id);
     }
   };
 
@@ -6774,11 +6781,19 @@ export default function WorkoutGenerator() {
     const stats = calculateSessionStats(setLogs);
     if (stats.completedSets === 0) return;
 
+    console.log('ForgeAI workout finish save started');
     const nextEntry = createWorkoutLogEntry(workoutLogs);
     const nextLogs = [nextEntry, ...workoutLogs];
     setWorkoutLogs(nextLogs);
     saveWorkoutLogs(nextLogs, authUser?.id);
-    void persistCompletedWorkoutLog(nextEntry);
+    console.log('ForgeAI workout local log saved', {
+      userId: authUser?.id || null,
+      workoutId: nextEntry.id
+    });
+    console.log('ForgeAI workout cloud save triggered', nextEntry.id);
+    void persistCompletedWorkoutLog(nextEntry).catch(error => {
+      console.error('ForgeAI workout cloud save failed', error);
+    });
     awardWorkoutCompletionReward(nextEntry.id);
     setActiveSessionSummary(nextEntry);
     setSelectedLogEntry(null);
