@@ -5285,12 +5285,31 @@ export default function WorkoutGenerator() {
       console.log('ForgeAI workout cloud session user', sessionUser?.id);
       if (!sessionUser?.id) throw new Error('No authenticated Supabase user is available.');
 
-      const saved = await saveUserWorkoutLog(sessionUser.id, entry);
-      console.log('ForgeAI workout cloud insert success', saved);
+      const insertPayload = {
+        user_id: sessionUser.id,
+        workout_data: {
+          ...entry,
+          supabaseId: undefined
+        }
+      };
+      console.log('Direct Supabase workout insert started', { localId: entry.id });
+      console.log('Direct Supabase workout insert session user', sessionUser.id);
+      console.log('Direct Supabase workout insert payload', insertPayload);
+      const { data, error: insertError } = await supabase
+        .from('workout_logs')
+        .insert(insertPayload)
+        .select('id, user_id, workout_data, created_at')
+        .single();
+      if (insertError) {
+        console.error('Direct Supabase workout insert failed', insertError);
+        throw insertError;
+      }
+      console.log('Direct Supabase workout insert success', data);
       const syncedEntry = normalizeWorkoutLogEntry({
-        ...saved,
+        ...(data.workout_data || entry),
         id: entry.id,
-        supabaseId: saved.supabaseId
+        supabaseId: data.id,
+        createdAt: entry.createdAt || data.created_at
       });
       setWorkoutLogs(currentLogs => {
         const nextLogs = currentLogs.map(log => log.id === entry.id ? syncedEntry : log);
@@ -5301,6 +5320,7 @@ export default function WorkoutGenerator() {
       setCloudDataError('');
       return syncedEntry;
     } catch (error) {
+      console.error('Direct Supabase workout insert failed', error);
       console.error('ForgeAI workout cloud insert failed', error);
       const message = error?.message || 'Unknown Supabase error.';
       setCloudDataError(`Cloud workout sync failed: ${message}`);
