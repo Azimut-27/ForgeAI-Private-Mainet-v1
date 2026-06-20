@@ -63,6 +63,7 @@ import { isSupabaseConfigured, supabase } from './lib/supabase';
 import {
   deleteAllUserWorkoutLogs,
   deleteUserWorkoutLog,
+  getAuthenticatedSupabaseUser,
   loadUserProfile,
   loadUserPrograms,
   loadUserWorkoutLogs,
@@ -5203,46 +5204,61 @@ export default function WorkoutGenerator() {
 
   const persistGeneratedProProgram = async (program) => {
     saveLocalProProgram(program, authUser?.id);
-    if (!authUser?.id || !supabase) return;
-    console.log('ForgeAI program save called', {
-      userId: authUser.id,
-      sport: program?.sport,
-      existingProgramId: program?.supabaseProgramId || null
-    });
+    if (!supabase) {
+      setCloudDataError('Cloud program sync is unavailable because Supabase is not configured.');
+      return;
+    }
     try {
+      const sessionUser = await getAuthenticatedSupabaseUser();
+      console.log('ForgeAI program save called', {
+        userId: sessionUser.id,
+        sport: program?.sport,
+        existingProgramId: program?.supabaseProgramId || null
+      });
       const saved = program.supabaseProgramId
-        ? await updateUserProgram(authUser.id, program.supabaseProgramId, program)
-        : await saveUserProgram(authUser.id, program);
+        ? await updateUserProgram(sessionUser.id, program.supabaseProgramId, program)
+        : await saveUserProgram(sessionUser.id, program);
       console.log('ForgeAI program saved', saved.id);
       const syncedProgram = { ...program, supabaseProgramId: saved.id };
-      saveLocalProProgram(syncedProgram, authUser.id);
+      saveLocalProProgram(syncedProgram, sessionUser.id);
       setProGeneratedProgram(current => (
         current?.generationSeed === program.generationSeed ? syncedProgram : current
       ));
+      setCloudDataError('');
     } catch (error) {
       console.error('ForgeAI program save failed', error);
-      setLogActionMessage('Program saved on this device and will sync when Supabase is available.');
+      const message = error?.message || 'Unknown Supabase error.';
+      setCloudDataError(`Cloud program sync failed: ${message}`);
+      setLogActionMessage(`Program saved on this device. Cloud sync failed: ${message}`);
     }
   };
 
   const persistCompletedWorkoutLog = async (entry) => {
-    if (!entry || !authUser?.id || !supabase) return;
-    console.log('ForgeAI workout log save called', {
-      userId: authUser.id,
-      workoutId: entry.id
-    });
+    if (!entry) return;
+    if (!supabase) {
+      setCloudDataError('Cloud workout sync is unavailable because Supabase is not configured.');
+      return;
+    }
     try {
-      const syncedEntry = normalizeWorkoutLogEntry(await saveUserWorkoutLog(authUser.id, entry));
+      const sessionUser = await getAuthenticatedSupabaseUser();
+      console.log('ForgeAI workout log save called', {
+        userId: sessionUser.id,
+        workoutId: entry.id
+      });
+      const syncedEntry = normalizeWorkoutLogEntry(await saveUserWorkoutLog(sessionUser.id, entry));
       console.log('ForgeAI workout log saved', syncedEntry.supabaseId);
       setWorkoutLogs(currentLogs => {
         const nextLogs = currentLogs.map(log => log.id === entry.id ? syncedEntry : log);
-        saveWorkoutLogs(nextLogs, authUser.id);
+        saveWorkoutLogs(nextLogs, sessionUser.id);
         return nextLogs;
       });
       setActiveSessionSummary(current => current?.id === entry.id ? syncedEntry : current);
+      setCloudDataError('');
     } catch (error) {
       console.error('ForgeAI workout log save failed', error);
-      setLogActionMessage('Workout saved on this device and will sync when Supabase is available.');
+      const message = error?.message || 'Unknown Supabase error.';
+      setCloudDataError(`Cloud workout sync failed: ${message}`);
+      setLogActionMessage(`Workout saved on this device. Cloud sync failed: ${message}`);
     }
   };
 
