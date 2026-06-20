@@ -5347,7 +5347,7 @@ export default function WorkoutGenerator() {
   };
 
   useEffect(() => {
-    if (typeof window === 'undefined' || !supabase || !authUser?.id) return undefined;
+    if (typeof window === 'undefined' || !supabase) return undefined;
     window.forgeTestWorkoutLogSave = async () => {
       const { data: userData, error: userError } = await supabase.auth.getUser();
       console.log('TEST userData', userData, userError);
@@ -5379,7 +5379,7 @@ export default function WorkoutGenerator() {
     return () => {
       delete window.forgeTestWorkoutLogSave;
     };
-  }, [authUser?.id]);
+  }, []);
 
   useEffect(() => {
     if (!supabase || !authUser?.id || !workoutLogs.length) return undefined;
