@@ -5264,7 +5264,8 @@ export default function WorkoutGenerator() {
         options: {
           redirectTo,
           queryParams: {
-            prompt: 'consent select_account'
+            prompt: 'select_account',
+            max_age: '0'
           }
         }
       });
