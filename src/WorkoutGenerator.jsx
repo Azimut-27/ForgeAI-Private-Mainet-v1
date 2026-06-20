@@ -5307,15 +5307,43 @@ export default function WorkoutGenerator() {
       return;
     }
 
+    if (!supabase) {
+      setSettingsProfileMessage('Supabase is not configured in this deployment.');
+      return;
+    }
+
+    let sessionUser;
+    try {
+      setSettingsProfileMessage('Saving username...');
+      const { data, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      sessionUser = data?.user;
+      if (!sessionUser?.id) throw new Error('Your login session is missing. Sign out and sign in again.');
+
+      console.log('ForgeAI profile username sync started', {
+        userId: sessionUser.id,
+        username: cleanName
+      });
+      const savedProfile = await updateUserProfileName(sessionUser.id, cleanName, sessionUser.email);
+      const verifiedProfile = await loadUserProfile(sessionUser.id);
+      if (verifiedProfile?.username !== cleanName || savedProfile?.username !== cleanName) {
+        throw new Error('Cloud verification failed. Supabase returned a different username.');
+      }
+      console.log('ForgeAI profile username synced', verifiedProfile);
+    } catch (error) {
+      console.error('ForgeAI profile username sync failed', error);
+      setSettingsProfileMessage(`Cloud save failed: ${error?.message || 'Unknown Supabase error.'}`);
+      return;
+    }
+
     const nextUser = {
-      ...(authUser || {
-        id: `local_profile_${Date.now()}`,
-        provider: 'local',
-        createdAt: new Date().toISOString()
-      }),
+      ...(authUser || {}),
+      id: sessionUser.id,
+      email: sessionUser.email || authUser?.email || '',
+      provider: 'supabase',
       name: cleanName,
       user_metadata: {
-        ...(authUser?.user_metadata || {}),
+        ...(authUser?.user_metadata || sessionUser.user_metadata || {}),
         name: cleanName,
         full_name: cleanName,
         username: cleanName,
@@ -5323,22 +5351,6 @@ export default function WorkoutGenerator() {
       },
       updatedAt: new Date().toISOString()
     };
-
-    if (supabase && authUser?.id) {
-      try {
-        console.log('ForgeAI profile username sync started', cleanName);
-        const savedProfile = await updateUserProfileName(authUser.id, cleanName, authUser.email);
-        const verifiedProfile = await loadUserProfile(authUser.id);
-        if (verifiedProfile?.username !== cleanName || savedProfile?.username !== cleanName) {
-          throw new Error('Supabase did not return the updated username.');
-        }
-        console.log('ForgeAI profile username synced', verifiedProfile);
-      } catch (error) {
-        console.error('ForgeAI profile username sync failed', error);
-        setSettingsProfileMessage(error?.message || 'Could not update the cloud profile username.');
-        return;
-      }
-    }
 
     saveAuthUser(nextUser);
     saveUserSettings({
