@@ -63,6 +63,7 @@ import { isSupabaseConfigured, supabase } from './lib/supabase';
 import {
   deleteAllUserWorkoutLogs,
   deleteUserWorkoutLog,
+  loadUserProfile,
   loadUserPrograms,
   loadUserWorkoutLogs,
   saveUserProgram,
@@ -184,7 +185,10 @@ export default function WorkoutGenerator() {
     if (!authUser?.id || !supabase) return undefined;
     let cancelled = false;
     console.log('ForgeAI profile sync started', authUser.id);
-    void upsertUserProfile(authUser)
+    void loadUserProfile(authUser.id)
+      .then(existingProfile => (
+        existingProfile || upsertUserProfile(authUser)
+      ))
       .then(profile => {
         console.log('ForgeAI profile synced', profile);
         if (!cancelled && profile?.username) {
@@ -5311,25 +5315,12 @@ export default function WorkoutGenerator() {
     };
 
     let cloudSyncWarning = '';
-    if (supabase) {
-      const { data, error } = await supabase.auth.updateUser({
-        data: {
-          name: cleanName,
-          full_name: cleanName,
-          username: cleanName,
-          display_name: cleanName
-        }
-      });
-      if (error) {
-        setSettingsProfileMessage(error.message || 'Could not update username.');
-        return;
-      }
+    if (supabase && authUser?.id) {
       try {
         const updatedSupabaseUser = {
           id: authUser?.id,
-          email: data?.user?.email || authUser?.email,
+          email: authUser?.email,
           user_metadata: {
-            ...(data?.user?.user_metadata || {}),
             ...(authUser?.user_metadata || {}),
             name: cleanName,
             full_name: cleanName,
@@ -5338,15 +5329,24 @@ export default function WorkoutGenerator() {
           }
         };
         await upsertUserProfile(updatedSupabaseUser);
-        const { data: verifiedUser, error: verifyError } = await supabase.auth.getUser();
-        if (verifyError) throw verifyError;
-        console.log('ForgeAI username synced', {
-          username: cleanName,
-          authMetadata: verifiedUser?.user?.user_metadata
-        });
+        console.log('ForgeAI profile username synced', cleanName);
       } catch (error) {
-        console.error('ForgeAI username sync failed', error);
-        cloudSyncWarning = ' Username saved locally; cloud profile sync will retry on login.';
+        console.error('ForgeAI profile username sync failed', error);
+        setSettingsProfileMessage(error?.message || 'Could not update the cloud profile username.');
+        return;
+      }
+
+      const { error: authMetadataError } = await supabase.auth.updateUser({
+        data: {
+          name: cleanName,
+          full_name: cleanName,
+          username: cleanName,
+          display_name: cleanName
+        }
+      });
+      if (authMetadataError) {
+        console.error('ForgeAI Auth username metadata sync failed', authMetadataError);
+        cloudSyncWarning = ' Profile updated; Auth metadata will retry on your next save.';
       }
     }
 
