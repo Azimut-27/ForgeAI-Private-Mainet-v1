@@ -5269,6 +5269,7 @@ export default function WorkoutGenerator() {
 
   const persistCompletedWorkoutLog = async (entry) => {
     if (!entry) return null;
+    console.log('ForgeAI workout cloud save started', { localId: entry.id });
     if (entry.id && cloudLogSyncInFlightRef.current.has(entry.id)) return null;
     if (entry.id) cloudLogSyncInFlightRef.current.add(entry.id);
     if (!supabase) {
@@ -5278,13 +5279,19 @@ export default function WorkoutGenerator() {
       throw error;
     }
     try {
-      const sessionUser = await getAuthenticatedSupabaseUser();
-      console.log('ForgeAI workout log save called', {
-        userId: sessionUser.id,
-        workoutId: entry.id
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      const sessionUser = userData?.user;
+      console.log('ForgeAI workout cloud session user', sessionUser?.id);
+      if (!sessionUser?.id) throw new Error('No authenticated Supabase user is available.');
+
+      const saved = await saveUserWorkoutLog(sessionUser.id, entry);
+      console.log('ForgeAI workout cloud insert success', saved);
+      const syncedEntry = normalizeWorkoutLogEntry({
+        ...saved,
+        id: entry.id,
+        supabaseId: saved.supabaseId
       });
-      const syncedEntry = normalizeWorkoutLogEntry(await saveUserWorkoutLog(sessionUser.id, entry));
-      console.log('ForgeAI workout log saved', syncedEntry.supabaseId);
       setWorkoutLogs(currentLogs => {
         const nextLogs = currentLogs.map(log => log.id === entry.id ? syncedEntry : log);
         saveWorkoutLogs(nextLogs, sessionUser.id);
@@ -5294,6 +5301,7 @@ export default function WorkoutGenerator() {
       setCloudDataError('');
       return syncedEntry;
     } catch (error) {
+      console.error('ForgeAI workout cloud insert failed', error);
       const message = error?.message || 'Unknown Supabase error.';
       setCloudDataError(`Cloud workout sync failed: ${message}`);
       setLogActionMessage(`Workout saved on this device. Cloud sync failed: ${message}`);
@@ -5302,6 +5310,24 @@ export default function WorkoutGenerator() {
       if (entry.id) cloudLogSyncInFlightRef.current.delete(entry.id);
     }
   };
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !import.meta.env.DEV || !supabase) return undefined;
+    window.forgeTestWorkoutLogSave = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) throw error;
+      if (!data?.user?.id) throw new Error('No authenticated Supabase user is available.');
+      return saveUserWorkoutLog(data.user.id, {
+        id: `test-${Date.now()}`,
+        title: 'Supabase Test Workout',
+        createdAt: new Date().toISOString(),
+        exercises: []
+      });
+    };
+    return () => {
+      delete window.forgeTestWorkoutLogSave;
+    };
+  }, []);
 
   useEffect(() => {
     if (!supabase || !authUser?.id || !workoutLogs.length) return undefined;
