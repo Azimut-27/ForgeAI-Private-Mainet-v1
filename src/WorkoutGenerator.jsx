@@ -125,6 +125,7 @@ export default function WorkoutGenerator() {
   const [authOAuthLoading, setAuthOAuthLoading] = useState(false);
   const [cloudDataLoading, setCloudDataLoading] = useState(false);
   const [cloudDataError, setCloudDataError] = useState('');
+  const [workoutSaveDiagnostic, setWorkoutSaveDiagnostic] = useState(null);
   const usernameInputRef = useRef(null);
   const supabaseHydratedUserRef = useRef(null);
   const cloudLogSyncInFlightRef = useRef(new Set());
@@ -476,6 +477,15 @@ export default function WorkoutGenerator() {
       setSettingsProfileMessage('');
     }
   }, [showSettingsScreen]);
+
+  useEffect(() => {
+    if (!workoutSaveDiagnostic?.message) return undefined;
+    const timeout = window.setTimeout(
+      () => setWorkoutSaveDiagnostic(null),
+      workoutSaveDiagnostic.type === 'error' ? 20000 : 8000
+    );
+    return () => window.clearTimeout(timeout);
+  }, [workoutSaveDiagnostic]);
 
   useEffect(() => {
     if (typeof document === 'undefined') return undefined;
@@ -5270,20 +5280,23 @@ export default function WorkoutGenerator() {
   const persistCompletedWorkoutLog = async (entry) => {
     if (!entry) return null;
     console.log('ForgeAI workout cloud save started', { localId: entry.id });
+    console.log('Direct Supabase workout client available', Boolean(supabase));
     if (entry.id && cloudLogSyncInFlightRef.current.has(entry.id)) return null;
     if (entry.id) cloudLogSyncInFlightRef.current.add(entry.id);
     if (!supabase) {
       const error = new Error('Cloud workout sync is unavailable because Supabase is not configured.');
+      setWorkoutSaveDiagnostic({ type: 'error', message: `Supabase save failed: ${error.message}` });
       setCloudDataError(error.message);
       if (entry.id) cloudLogSyncInFlightRef.current.delete(entry.id);
       throw error;
     }
     try {
+      setWorkoutSaveDiagnostic({ type: 'pending', message: 'Saving workout to Supabase...' });
       const { data: userData, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
       const sessionUser = userData?.user;
       console.log('ForgeAI workout cloud session user', sessionUser?.id);
-      if (!sessionUser?.id) throw new Error('No authenticated Supabase user is available.');
+      if (!sessionUser?.id) throw new Error('No Supabase session found during workout save.');
 
       const insertPayload = {
         user_id: sessionUser.id,
@@ -5318,11 +5331,13 @@ export default function WorkoutGenerator() {
       });
       setActiveSessionSummary(current => current?.id === entry.id ? syncedEntry : current);
       setCloudDataError('');
+      setWorkoutSaveDiagnostic({ type: 'success', message: 'Workout saved to Supabase' });
       return syncedEntry;
     } catch (error) {
       console.error('Direct Supabase workout insert failed', error);
       console.error('ForgeAI workout cloud insert failed', error);
       const message = error?.message || 'Unknown Supabase error.';
+      setWorkoutSaveDiagnostic({ type: 'error', message: `Supabase save failed: ${message}` });
       setCloudDataError(`Cloud workout sync failed: ${message}`);
       setLogActionMessage(`Workout saved on this device. Cloud sync failed: ${message}`);
       throw error;
@@ -6828,6 +6843,7 @@ export default function WorkoutGenerator() {
     if (stats.completedSets === 0) return;
 
     console.log('ForgeAI workout finish save started');
+    setWorkoutSaveDiagnostic({ type: 'pending', message: 'Saving workout locally...' });
     const nextEntry = createWorkoutLogEntry(workoutLogs);
     const nextLogs = [nextEntry, ...workoutLogs];
     setWorkoutLogs(nextLogs);
@@ -6836,6 +6852,7 @@ export default function WorkoutGenerator() {
       userId: authUser?.id || null,
       workoutId: nextEntry.id
     });
+    setWorkoutSaveDiagnostic({ type: 'pending', message: 'Saving workout to Supabase...' });
     console.log('ForgeAI workout cloud save triggered', nextEntry.id);
     void persistCompletedWorkoutLog(nextEntry).catch(error => {
       console.error('ForgeAI workout cloud save failed', error);
@@ -19100,6 +19117,21 @@ export default function WorkoutGenerator() {
           >
             <X className="h-4 w-4" />
           </button>
+        </div>
+      )}
+      {workoutSaveDiagnostic?.message && (
+        <div
+          role="status"
+          aria-live="polite"
+          className={`fixed bottom-24 left-1/2 z-[95] w-[min(92vw,30rem)] -translate-x-1/2 rounded-2xl border px-4 py-3 text-center text-xs font-black shadow-[0_18px_70px_rgba(0,0,0,0.5)] backdrop-blur-2xl ${
+            workoutSaveDiagnostic.type === 'success'
+              ? 'border-emerald-300/25 bg-emerald-950/92 text-emerald-100'
+              : workoutSaveDiagnostic.type === 'error'
+                ? 'border-red-300/25 bg-red-950/94 text-red-100'
+                : 'border-amber-200/25 bg-zinc-950/94 text-amber-100'
+          }`}
+        >
+          {workoutSaveDiagnostic.message}
         </div>
       )}
       <style>{`
