@@ -387,13 +387,32 @@ export default function WorkoutGenerator() {
         console.log('ForgeAI program load called', userId);
         const remotePrograms = await loadUserPrograms(userId);
         console.log('ForgeAI programs loaded', remotePrograms.length);
-        if (!remotePrograms.length && localPrograms.length) {
-          await Promise.allSettled(localPrograms.map(item => saveUserProgram(userId, item.programData)));
-        } else if (remotePrograms.length) {
-          cacheLocalProPrograms(remotePrograms, userId);
-        }
-        const latestProgram = remotePrograms[0]
-          ? { ...remotePrograms[0].programData, supabaseProgramId: remotePrograms[0].id }
+        const remoteProgramSeeds = new Set(remotePrograms.map(item => item.programData?.generationSeed).filter(Boolean));
+        const unsyncedPrograms = localPrograms.filter(item => {
+          if (item.programData?.supabaseProgramId) return false;
+          const seed = item.programData?.generationSeed;
+          return !seed || !remoteProgramSeeds.has(seed);
+        });
+        const programUploadResults = await Promise.allSettled(
+          unsyncedPrograms.map(item => saveUserProgram(userId, item.programData))
+        );
+        const rejectedProgramUpload = programUploadResults.find(result => result.status === 'rejected');
+        if (rejectedProgramUpload) throw rejectedProgramUpload.reason;
+        const uploadedPrograms = programUploadResults
+          .filter(result => result.status === 'fulfilled')
+          .map(result => ({
+            id: result.value.id,
+            userId: result.value.user_id,
+            name: result.value.name,
+            sport: result.value.sport,
+            programData: result.value.program_data,
+            createdAt: result.value.created_at
+          }));
+        const syncedPrograms = [...uploadedPrograms, ...remotePrograms]
+          .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+        if (syncedPrograms.length) cacheLocalProPrograms(syncedPrograms, userId);
+        const latestProgram = syncedPrograms[0]
+          ? { ...syncedPrograms[0].programData, supabaseProgramId: syncedPrograms[0].id }
           : localPrograms[0]?.programData;
         if (!cancelled && latestProgram) {
           setProGeneratedProgram(latestProgram);
@@ -420,6 +439,8 @@ export default function WorkoutGenerator() {
         const remoteClientIds = new Set(remoteLogs.map(log => log.id).filter(Boolean));
         const unsyncedLogs = localLogs.filter(log => log.id && !remoteClientIds.has(log.id));
         const uploadResults = await Promise.allSettled(unsyncedLogs.map(log => saveUserWorkoutLog(userId, log)));
+        const rejectedLogUpload = uploadResults.find(result => result.status === 'rejected');
+        if (rejectedLogUpload) throw rejectedLogUpload.reason;
         const uploadedLogs = uploadResults
           .filter(result => result.status === 'fulfilled')
           .map(result => result.value);
@@ -5158,7 +5179,18 @@ export default function WorkoutGenerator() {
   const loadLocalProPrograms = (userId = authUser?.id) => {
     if (typeof window === 'undefined') return [];
     try {
-      const raw = window.localStorage.getItem(getLocalProgramsStorageKey(userId));
+      const storageKey = getLocalProgramsStorageKey(userId);
+      let raw = window.localStorage.getItem(storageKey);
+      if (!raw && userId) {
+        const legacyOwnerKey = 'forgeai_legacy_programs_owner';
+        const legacyOwner = window.localStorage.getItem(legacyOwnerKey);
+        const legacyRaw = window.localStorage.getItem(getLocalProgramsStorageKey(null));
+        if (legacyRaw && (!legacyOwner || legacyOwner === userId)) {
+          window.localStorage.setItem(legacyOwnerKey, userId);
+          window.localStorage.setItem(storageKey, legacyRaw);
+          raw = legacyRaw;
+        }
+      }
       const parsed = raw ? JSON.parse(raw) : [];
       return Array.isArray(parsed) ? parsed.filter(item => item?.programData) : [];
     } catch (error) {
