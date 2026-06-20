@@ -23,6 +23,18 @@ export const upsertUserProfile = async (user) => {
 
 export const ensureUserProfile = upsertUserProfile;
 
+export const loadUserProfile = async (userId) => {
+  if (!userId) return null;
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('profiles')
+    .select('id, username, email, created_at')
+    .eq('id', userId)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+};
+
 export const updateUserProfileName = async (userId, username) => {
   if (!userId) throw new Error('An authenticated user is required.');
   const client = requireSupabase();
