@@ -5300,6 +5300,13 @@ export default function WorkoutGenerator() {
         createdAt: new Date().toISOString()
       }),
       name: cleanName,
+      user_metadata: {
+        ...(authUser?.user_metadata || {}),
+        name: cleanName,
+        full_name: cleanName,
+        username: cleanName,
+        display_name: cleanName
+      },
       updatedAt: new Date().toISOString()
     };
 
@@ -5308,7 +5315,9 @@ export default function WorkoutGenerator() {
       const { data, error } = await supabase.auth.updateUser({
         data: {
           name: cleanName,
-          username: cleanName
+          full_name: cleanName,
+          username: cleanName,
+          display_name: cleanName
         }
       });
       if (error) {
@@ -5316,17 +5325,25 @@ export default function WorkoutGenerator() {
         return;
       }
       try {
-        const updatedSupabaseUser = data?.user || {
+        const updatedSupabaseUser = {
           id: authUser?.id,
-          email: authUser?.email,
+          email: data?.user?.email || authUser?.email,
           user_metadata: {
+            ...(data?.user?.user_metadata || {}),
             ...(authUser?.user_metadata || {}),
             name: cleanName,
-            username: cleanName
+            full_name: cleanName,
+            username: cleanName,
+            display_name: cleanName
           }
         };
         await upsertUserProfile(updatedSupabaseUser);
-        console.log('ForgeAI username synced', cleanName);
+        const { data: verifiedUser, error: verifyError } = await supabase.auth.getUser();
+        if (verifyError) throw verifyError;
+        console.log('ForgeAI username synced', {
+          username: cleanName,
+          authMetadata: verifiedUser?.user?.user_metadata
+        });
       } catch (error) {
         console.error('ForgeAI username sync failed', error);
         cloudSyncWarning = ' Username saved locally; cloud profile sync will retry on login.';
@@ -5340,7 +5357,7 @@ export default function WorkoutGenerator() {
       name: cleanName
     });
     if (usernameInputRef.current) usernameInputRef.current.value = cleanName;
-    setSettingsProfileMessage(cloudSyncWarning ? `Username updated.${cloudSyncWarning}` : 'Username updated.');
+    setSettingsProfileMessage(cloudSyncWarning ? `Username updated.${cloudSyncWarning}` : 'Username synced to Supabase.');
   };
 
   const updateUserSetting = (key, value) => {
