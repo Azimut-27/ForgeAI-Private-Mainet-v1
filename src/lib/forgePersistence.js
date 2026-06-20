@@ -102,6 +102,19 @@ export const saveUserProgram = async (userId, program) => {
   const name = `${program.sport || 'ForgeAI PRO'}${program.durationWeeks ? ` - ${program.durationWeeks} Weeks` : ''}`;
   const programData = { ...program };
   delete programData.supabaseProgramId;
+
+  if (programData.generationSeed) {
+    const { data: existing, error: existingError } = await client
+      .from('programs')
+      .select('id, user_id, name, sport, program_data, created_at')
+      .eq('user_id', userId)
+      .contains('program_data', { generationSeed: programData.generationSeed })
+      .limit(1)
+      .maybeSingle();
+    if (existingError) throw existingError;
+    if (existing) return existing;
+  }
+
   const { data, error } = await client
     .from('programs')
     .insert({
@@ -161,6 +174,25 @@ export const saveUserWorkoutLog = async (userId, workoutLog) => {
   await getAuthenticatedSupabaseUser(userId);
   const workoutData = { ...workoutLog };
   delete workoutData.supabaseId;
+
+  if (workoutData.id) {
+    const { data: existing, error: existingError } = await client
+      .from('workout_logs')
+      .select('id, user_id, workout_data, created_at')
+      .eq('user_id', userId)
+      .contains('workout_data', { id: workoutData.id })
+      .limit(1)
+      .maybeSingle();
+    if (existingError) throw existingError;
+    if (existing) {
+      return {
+        ...(existing.workout_data || workoutData),
+        supabaseId: existing.id,
+        createdAt: existing.workout_data?.createdAt || existing.created_at
+      };
+    }
+  }
+
   const { data, error } = await client
     .from('workout_logs')
     .insert({ user_id: userId, workout_data: workoutData })
