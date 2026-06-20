@@ -35,13 +35,19 @@ export const loadUserProfile = async (userId) => {
   return data;
 };
 
-export const updateUserProfileName = async (userId, username) => {
+export const updateUserProfileName = async (userId, username, email = null) => {
   if (!userId) throw new Error('An authenticated user is required.');
   const client = requireSupabase();
+  const cleanUsername = String(username || '').trim().replace(/\s+/g, ' ');
+  if (!cleanUsername) throw new Error('A username is required.');
+
   const { data, error } = await client
     .from('profiles')
-    .update({ username })
-    .eq('id', userId)
+    .upsert({
+      id: userId,
+      username: cleanUsername,
+      ...(email ? { email } : {})
+    }, { onConflict: 'id' })
     .select('id, username, email, created_at')
     .single();
   if (error) throw error;
