@@ -127,6 +127,8 @@ export default function WorkoutGenerator() {
   const [cloudDataError, setCloudDataError] = useState('');
   const usernameInputRef = useRef(null);
   const supabaseHydratedUserRef = useRef(null);
+  const cloudLogSyncInFlightRef = useRef(new Set());
+  const cloudProgramSyncInFlightRef = useRef(new Set());
   const [settingsProfileMessage, setSettingsProfileMessage] = useState('');
   const [settings, setSettings] = useState({
     goal: 'build-muscle',
@@ -5293,6 +5295,77 @@ export default function WorkoutGenerator() {
       setLogActionMessage(`Workout saved on this device. Cloud sync failed: ${message}`);
     }
   };
+
+  useEffect(() => {
+    if (!supabase || !authUser?.id || !workoutLogs.length) return undefined;
+    const unsyncedLogs = workoutLogs.filter(log => (
+      log?.id
+      && !log.supabaseId
+      && !cloudLogSyncInFlightRef.current.has(log.id)
+    ));
+    if (!unsyncedLogs.length) return undefined;
+
+    let cancelled = false;
+    unsyncedLogs.forEach(log => cloudLogSyncInFlightRef.current.add(log.id));
+    void (async () => {
+      try {
+        const sessionUser = await getAuthenticatedSupabaseUser(authUser.id);
+        const synced = await Promise.all(
+          unsyncedLogs.map(log => saveUserWorkoutLog(sessionUser.id, log))
+        );
+        if (cancelled) return;
+        const syncedByClientId = new Map(synced.map(log => [log.id, normalizeWorkoutLogEntry(log)]));
+        setWorkoutLogs(currentLogs => {
+          const nextLogs = currentLogs.map(log => syncedByClientId.get(log.id) || log);
+          saveWorkoutLogs(nextLogs, sessionUser.id);
+          return nextLogs;
+        });
+        console.log('ForgeAI visible workout logs synced', synced.length);
+        setCloudDataError('');
+      } catch (error) {
+        console.error('ForgeAI visible workout log sync failed', error);
+        if (!cancelled) setCloudDataError(`Cloud workout sync failed: ${error?.message || 'Unknown Supabase error.'}`);
+      } finally {
+        unsyncedLogs.forEach(log => cloudLogSyncInFlightRef.current.delete(log.id));
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authUser?.id, workoutLogs]);
+
+  useEffect(() => {
+    if (!supabase || !authUser?.id || !proGeneratedProgram || proGeneratedProgram.supabaseProgramId) return undefined;
+    const syncKey = proGeneratedProgram.generationSeed || `${proGeneratedProgram.sport || 'program'}-${proGeneratedProgram.createdAt || ''}`;
+    if (cloudProgramSyncInFlightRef.current.has(syncKey)) return undefined;
+
+    let cancelled = false;
+    cloudProgramSyncInFlightRef.current.add(syncKey);
+    void (async () => {
+      try {
+        const sessionUser = await getAuthenticatedSupabaseUser(authUser.id);
+        const saved = await saveUserProgram(sessionUser.id, proGeneratedProgram);
+        if (cancelled) return;
+        const syncedProgram = { ...proGeneratedProgram, supabaseProgramId: saved.id };
+        saveLocalProProgram(syncedProgram, sessionUser.id);
+        setProGeneratedProgram(current => (
+          current === proGeneratedProgram ? syncedProgram : current
+        ));
+        console.log('ForgeAI visible PRO program synced', saved.id);
+        setCloudDataError('');
+      } catch (error) {
+        console.error('ForgeAI visible PRO program sync failed', error);
+        if (!cancelled) setCloudDataError(`Cloud program sync failed: ${error?.message || 'Unknown Supabase error.'}`);
+      } finally {
+        cloudProgramSyncInFlightRef.current.delete(syncKey);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authUser?.id, proGeneratedProgram]);
 
   const handleGoogleSignIn = async () => {
     setAuthMessage('');
