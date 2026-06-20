@@ -68,7 +68,6 @@ import {
   saveUserProgram,
   saveUserWorkoutLog,
   updateUserProgram,
-  updateUserProfileName,
   updateUserWorkoutLog,
   upsertUserProfile
 } from './lib/forgePersistence';
@@ -5304,8 +5303,9 @@ export default function WorkoutGenerator() {
       updatedAt: new Date().toISOString()
     };
 
+    let cloudSyncWarning = '';
     if (supabase) {
-      const { error } = await supabase.auth.updateUser({
+      const { data, error } = await supabase.auth.updateUser({
         data: {
           name: cleanName,
           username: cleanName
@@ -5316,10 +5316,20 @@ export default function WorkoutGenerator() {
         return;
       }
       try {
-        await updateUserProfileName(authUser?.id, cleanName);
+        const updatedSupabaseUser = data?.user || {
+          id: authUser?.id,
+          email: authUser?.email,
+          user_metadata: {
+            ...(authUser?.user_metadata || {}),
+            name: cleanName,
+            username: cleanName
+          }
+        };
+        await upsertUserProfile(updatedSupabaseUser);
+        console.log('ForgeAI username synced', cleanName);
       } catch (error) {
-        setSettingsProfileMessage(error?.message || 'Username updated in Auth but not in the profile table.');
-        return;
+        console.error('ForgeAI username sync failed', error);
+        cloudSyncWarning = ' Username saved locally; cloud profile sync will retry on login.';
       }
     }
 
@@ -5330,7 +5340,7 @@ export default function WorkoutGenerator() {
       name: cleanName
     });
     if (usernameInputRef.current) usernameInputRef.current.value = cleanName;
-    setSettingsProfileMessage('Username updated.');
+    setSettingsProfileMessage(cloudSyncWarning ? `Username updated.${cloudSyncWarning}` : 'Username updated.');
   };
 
   const updateUserSetting = (key, value) => {
