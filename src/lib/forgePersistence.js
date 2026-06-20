@@ -5,6 +5,18 @@ const requireSupabase = () => {
   return supabase;
 };
 
+export const getAuthenticatedSupabaseUser = async (expectedUserId = null) => {
+  const client = requireSupabase();
+  const { data, error } = await client.auth.getUser();
+  if (error) throw error;
+  const user = data?.user;
+  if (!user?.id) throw new Error('No authenticated Supabase user is available.');
+  if (expectedUserId && user.id !== expectedUserId) {
+    throw new Error('The active Supabase session does not match the ForgeAI user.');
+  }
+  return user;
+};
+
 export const upsertUserProfile = async (user) => {
   if (!user?.id) throw new Error('An authenticated user is required.');
   const client = requireSupabase();
@@ -66,6 +78,7 @@ export const updateUserProfileName = async (userId, username, email = null) => {
 export const loadUserPrograms = async (userId) => {
   if (!userId) return [];
   const client = requireSupabase();
+  await getAuthenticatedSupabaseUser(userId);
   const { data, error } = await client
     .from('programs')
     .select('id, user_id, name, sport, program_data, created_at')
@@ -85,6 +98,7 @@ export const loadUserPrograms = async (userId) => {
 export const saveUserProgram = async (userId, program) => {
   if (!userId || !program) throw new Error('A user and program are required.');
   const client = requireSupabase();
+  await getAuthenticatedSupabaseUser(userId);
   const name = `${program.sport || 'ForgeAI PRO'}${program.durationWeeks ? ` - ${program.durationWeeks} Weeks` : ''}`;
   const programData = { ...program };
   delete programData.supabaseProgramId;
@@ -105,6 +119,7 @@ export const saveUserProgram = async (userId, program) => {
 export const updateUserProgram = async (userId, programId, program) => {
   if (!userId || !programId || !program) throw new Error('A user, program id, and program are required.');
   const client = requireSupabase();
+  await getAuthenticatedSupabaseUser(userId);
   const name = `${program.sport || 'ForgeAI PRO'}${program.durationWeeks ? ` - ${program.durationWeeks} Weeks` : ''}`;
   const programData = { ...program };
   delete programData.supabaseProgramId;
@@ -126,6 +141,7 @@ export const updateUserProgram = async (userId, programId, program) => {
 export const loadUserWorkoutLogs = async (userId) => {
   if (!userId) return [];
   const client = requireSupabase();
+  await getAuthenticatedSupabaseUser(userId);
   const { data, error } = await client
     .from('workout_logs')
     .select('id, user_id, workout_data, created_at')
@@ -142,6 +158,7 @@ export const loadUserWorkoutLogs = async (userId) => {
 export const saveUserWorkoutLog = async (userId, workoutLog) => {
   if (!userId || !workoutLog) throw new Error('A user and workout log are required.');
   const client = requireSupabase();
+  await getAuthenticatedSupabaseUser(userId);
   const workoutData = { ...workoutLog };
   delete workoutData.supabaseId;
   const { data, error } = await client
@@ -160,6 +177,7 @@ export const saveUserWorkoutLog = async (userId, workoutLog) => {
 export const updateUserWorkoutLog = async (userId, workoutLog) => {
   if (!userId || !workoutLog?.supabaseId) return null;
   const client = requireSupabase();
+  await getAuthenticatedSupabaseUser(userId);
   const workoutData = { ...workoutLog };
   delete workoutData.supabaseId;
   const { error } = await client
@@ -174,6 +192,7 @@ export const updateUserWorkoutLog = async (userId, workoutLog) => {
 export const deleteUserWorkoutLog = async (userId, supabaseId) => {
   if (!userId || !supabaseId) return;
   const client = requireSupabase();
+  await getAuthenticatedSupabaseUser(userId);
   const { error } = await client
     .from('workout_logs')
     .delete()
@@ -185,6 +204,7 @@ export const deleteUserWorkoutLog = async (userId, supabaseId) => {
 export const deleteAllUserWorkoutLogs = async (userId) => {
   if (!userId) return;
   const client = requireSupabase();
+  await getAuthenticatedSupabaseUser(userId);
   const { error } = await client
     .from('workout_logs')
     .delete()
