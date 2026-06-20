@@ -5347,22 +5347,39 @@ export default function WorkoutGenerator() {
   };
 
   useEffect(() => {
-    if (typeof window === 'undefined' || !import.meta.env.DEV || !supabase) return undefined;
+    if (typeof window === 'undefined' || !supabase || !authUser?.id) return undefined;
     window.forgeTestWorkoutLogSave = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (error) throw error;
-      if (!data?.user?.id) throw new Error('No authenticated Supabase user is available.');
-      return saveUserWorkoutLog(data.user.id, {
-        id: `test-${Date.now()}`,
-        title: 'Supabase Test Workout',
-        createdAt: new Date().toISOString(),
-        exercises: []
-      });
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      console.log('TEST userData', userData, userError);
+
+      if (userError) throw userError;
+      if (!userData?.user?.id) throw new Error('No logged-in Supabase user.');
+
+      const payload = {
+        user_id: userData.user.id,
+        workout_data: {
+          id: `manual-test-${Date.now()}`,
+          title: 'Manual Supabase Test Workout',
+          createdAt: new Date().toISOString(),
+          exercises: []
+        }
+      };
+
+      console.log('TEST insert payload', payload);
+
+      const result = await supabase
+        .from('workout_logs')
+        .insert(payload)
+        .select('*')
+        .single();
+
+      console.log('TEST insert result', result);
+      return result;
     };
     return () => {
       delete window.forgeTestWorkoutLogSave;
     };
-  }, []);
+  }, [authUser?.id]);
 
   useEffect(() => {
     if (!supabase || !authUser?.id || !workoutLogs.length) return undefined;
