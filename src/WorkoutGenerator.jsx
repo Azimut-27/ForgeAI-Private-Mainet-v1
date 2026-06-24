@@ -58,8 +58,13 @@ import {
   X,
   Zap
 } from 'lucide-react';
-import { buildForgeCoachContext, generateGeminiResponse } from './lib/gemini';
 import { isSupabaseConfigured, supabase } from './lib/supabase';
+import { APP_VERSION } from './appVersion';
+import {
+  applyWorkoutAgentProposal,
+  cloneWorkoutForAgent,
+  requestWorkoutAgentProposal
+} from './lib/workoutAgent';
 import {
   deleteAllUserWorkoutLogs,
   deleteUserWorkoutLog,
@@ -120,6 +125,23 @@ const createForgeUserFromSupabase = (user) => {
   };
 };
 
+const BETA_ALLOWED_EMAILS = [
+  'example1@gmail.com',
+  'example2@gmail.com'
+];
+
+const BETA_ACCESS_DENIED_MESSAGE = 'This ForgeAI private beta is invite-only.';
+const normalizeBetaEmail = (email) => String(email || '').trim().toLowerCase();
+const isBetaEmailAllowed = (email) => BETA_ALLOWED_EMAILS.includes(normalizeBetaEmail(email));
+const USE_LOCAL_DEV_AUTH = import.meta.env.DEV && !isSupabaseConfigured;
+const LOCAL_DEV_AUTH_USER = {
+  id: 'forgeai-local-agent-tester',
+  name: 'ForgeAI Tester',
+  email: 'local-agent@forgeai.dev',
+  provider: 'local-development',
+  user_metadata: { name: 'ForgeAI Tester' }
+};
+
 export default function WorkoutGenerator() {
   const [authUser, setAuthUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -148,11 +170,39 @@ export default function WorkoutGenerator() {
 
   useEffect(() => {
     let isMounted = true;
+    let betaSignOutPending = false;
+
+    const denyBetaAccess = async (user) => {
+      const normalizedEmail = normalizeBetaEmail(user?.email);
+      console.warn('ForgeAI beta access denied', normalizedEmail);
+      if (isMounted) {
+        setCloudDataLoading(false);
+        setAuthUser(null);
+        setAuthMessage(BETA_ACCESS_DENIED_MESSAGE);
+        setAuthLoading(false);
+      }
+
+      if (betaSignOutPending) return;
+      betaSignOutPending = true;
+      try {
+        await supabase.auth.signOut();
+      } catch (signOutError) {
+        console.error('ForgeAI beta access sign out failed', signOutError);
+      } finally {
+        betaSignOutPending = false;
+      }
+    };
 
     const initializeSupabaseSession = async () => {
       if (!supabase) {
         if (isMounted) {
-          setAuthUser(null);
+          setAuthUser(USE_LOCAL_DEV_AUTH ? LOCAL_DEV_AUTH_USER : null);
+          setAuthMessage('');
+          setCloudDataLoading(false);
+          if (USE_LOCAL_DEV_AUTH) {
+            initializeLocalUserState();
+            console.log('ForgeAI local development session enabled');
+          }
           setAuthLoading(false);
         }
         return;
@@ -163,7 +213,16 @@ export default function WorkoutGenerator() {
       if (error) {
         setAuthMessage(error.message || 'Could not restore your ForgeAI session.');
       }
-      const restoredUser = createForgeUserFromSupabase(data?.session?.user);
+      const sessionUser = data?.session?.user;
+      if (sessionUser && !isBetaEmailAllowed(sessionUser.email)) {
+        await denyBetaAccess(sessionUser);
+        return;
+      }
+      if (sessionUser) {
+        console.log('ForgeAI beta access approved', normalizeBetaEmail(sessionUser.email));
+        setAuthMessage('');
+      }
+      const restoredUser = createForgeUserFromSupabase(sessionUser);
       setCloudDataLoading(!!restoredUser);
       setAuthUser(restoredUser);
       if (restoredUser) {
@@ -175,7 +234,25 @@ export default function WorkoutGenerator() {
     initializeSupabaseSession();
 
     const { data: listener } = supabase?.auth.onAuthStateChange((_event, session) => {
-      const nextUser = createForgeUserFromSupabase(session?.user);
+      const sessionUser = session?.user;
+      if (sessionUser && !isBetaEmailAllowed(sessionUser.email)) {
+        setCloudDataLoading(false);
+        setAuthUser(null);
+        setAuthMessage(BETA_ACCESS_DENIED_MESSAGE);
+        setAuthLoading(false);
+        console.warn('ForgeAI beta access denied', normalizeBetaEmail(sessionUser.email));
+
+        // Run sign-out after the auth callback completes to avoid locking the auth client.
+        window.setTimeout(() => {
+          void denyBetaAccess(sessionUser);
+        }, 0);
+        return;
+      }
+      if (sessionUser) {
+        console.log('ForgeAI beta access approved', normalizeBetaEmail(sessionUser.email));
+        setAuthMessage('');
+      }
+      const nextUser = createForgeUserFromSupabase(sessionUser);
       setCloudDataLoading(!!nextUser);
       setAuthUser(nextUser);
       if (nextUser) {
@@ -285,6 +362,8 @@ export default function WorkoutGenerator() {
   const [aiMode, setAiMode] = useState('demo');
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
+  const [pendingAgentProposal, setPendingAgentProposal] = useState(null);
+  const [lastWorkoutBeforeAgentChange, setLastWorkoutBeforeAgentChange] = useState(null);
   const [mealPhoto, setMealPhoto] = useState(null);
   const [mealPhotoPreview, setMealPhotoPreview] = useState('');
   const [mealAnalysisLoading, setMealAnalysisLoading] = useState(false);
@@ -2392,6 +2471,8 @@ export default function WorkoutGenerator() {
     setActiveExerciseIndex(null);
     setShowFinishSummary(false);
     setShowAddExerciseModal(false);
+    setPendingAgentProposal(null);
+    setLastWorkoutBeforeAgentChange(null);
   };
 
   const generateWorkout = () => {
@@ -4948,7 +5029,6 @@ export default function WorkoutGenerator() {
     return {
       xp,
       level,
-      forgePoints: Number(overrides.forgePoints) || 0,
       dailyClaimStreak: Number(overrides.dailyClaimStreak) || 0,
       totalDailyClaims: Number(overrides.totalDailyClaims) || 0,
       lastDailyClaimDate: overrides.lastDailyClaimDate || null,
@@ -5008,7 +5088,6 @@ export default function WorkoutGenerator() {
         console.log('ForgeAI cloud progress saved', {
           userId: sessionUser.id,
           xp: saved.xp,
-          forgePoints: saved.forge_points,
           rank: saved.rank
         });
         return saved;
@@ -6226,7 +6305,7 @@ export default function WorkoutGenerator() {
     return parts.length ? parts.join(' + ') : 'Free';
   };
 
-  const awardProgress = ({ xp = 0, forgePoints = 0, reason = 'ForgeAI progress', actionId, applyMultiplier = true, eventType = 'progress', updates = {} }) => {
+  const awardProgress = ({ xp = 0, reason = 'ForgeAI progress', actionId, applyMultiplier = true, eventType = 'progress', updates = {} }) => {
     const id = actionId || `${reason}-${Date.now()}`;
     setUserProgress(current => {
       const base = normalizeUserProgress(current || loadUserProgress());
@@ -6234,18 +6313,15 @@ export default function WorkoutGenerator() {
 
       const multiplier = applyMultiplier && xp > 0 ? getXpMultiplier(base) : 1;
       const awardedXp = Math.round((Number(xp) || 0) * multiplier);
-      const awardedForgePoints = 0;
       const next = normalizeUserProgress({
         ...base,
         ...updates,
         xp: base.xp + awardedXp,
-        forgePoints: base.forgePoints,
         awardedActions: {
           ...base.awardedActions,
           [id]: {
             reason,
             xp: awardedXp,
-            forgePoints: awardedForgePoints,
             multiplier,
             awardedAt: new Date().toISOString()
           }
@@ -6255,7 +6331,6 @@ export default function WorkoutGenerator() {
             id,
             type: eventType,
             amountXP: awardedXp,
-            amountForgePoints: awardedForgePoints,
             multiplier,
             label: reason,
             createdAt: new Date().toISOString()
@@ -6272,10 +6347,6 @@ export default function WorkoutGenerator() {
     awardProgress({ xp: amount, reason, actionId: actionId || `${reason}-xp` });
   };
 
-  const addForgePoints = (amount, reason, actionId) => {
-    awardProgress({ xp: 0, reason, actionId: actionId || `${reason}-xp-only` });
-  };
-
   const claimDailyReward = () => {
     const base = normalizeUserProgress(userProgress || loadUserProgress());
     if (!canClaimDaily(base)) return;
@@ -6285,12 +6356,10 @@ export default function WorkoutGenerator() {
     const newStreak = getDailyStreakAfterClaim(base);
     const multiplier = getXpMultiplier(base);
     const claimXp = Math.round(50 * multiplier);
-    const claimForgePoints = 0;
     const actionId = `daily-claim-${Date.now()}`;
     const next = normalizeUserProgress({
       ...base,
       xp: base.xp + claimXp,
-      forgePoints: base.forgePoints,
       dailyClaimStreak: newStreak,
       totalDailyClaims: (base.totalDailyClaims || 0) + 1,
       lastDailyClaimDate: today,
@@ -6300,7 +6369,6 @@ export default function WorkoutGenerator() {
         [actionId]: {
           reason: 'Daily Forge Claim',
           xp: claimXp,
-          forgePoints: claimForgePoints,
           multiplier,
           awardedAt: claimedAt
         }
@@ -6310,7 +6378,6 @@ export default function WorkoutGenerator() {
           id: actionId,
           type: 'daily_claim',
           amountXP: claimXp,
-          amountForgePoints: claimForgePoints,
           multiplier,
           label: 'Daily Claim',
           createdAt: claimedAt
@@ -6323,7 +6390,6 @@ export default function WorkoutGenerator() {
     setUserProgress(next);
     setDailyClaimCelebration({
       xp: claimXp,
-      forgePoints: claimForgePoints,
       multiplier,
       multiplierLabel: getMultiplierLabel(base),
       totalXp: next.xp,
@@ -6347,7 +6413,6 @@ export default function WorkoutGenerator() {
       eligible,
       multiplier,
       xp: eligible ? Math.round(120 * multiplier) : 0,
-      forgePoints: 0,
       label: getMultiplierLabel(current)
     };
   };
@@ -6359,7 +6424,6 @@ export default function WorkoutGenerator() {
 
     awardProgress({
       xp: 120,
-      forgePoints: 0,
       reason: 'Workout Completed',
       actionId: `workout-xp-${today}`,
       eventType: 'workout_completed',
@@ -6378,7 +6442,6 @@ export default function WorkoutGenerator() {
     return {
       baseXp: xpByWeeks[weeks] || 300,
       xp: Math.round((xpByWeeks[weeks] || 300) * multiplier),
-      forgePoints: 0,
       multiplier
     };
   };
@@ -6388,7 +6451,6 @@ export default function WorkoutGenerator() {
     const reward = getProPurchaseReward(weeks, base);
     awardProgress({
       xp: reward.baseXp,
-      forgePoints: 0,
       reason: `PRO ${weeks} Week Block`,
       actionId,
       eventType: 'pro_unlock',
@@ -6405,7 +6467,6 @@ export default function WorkoutGenerator() {
     if (base.aiSubscriptionActive) return;
     awardProgress({
       xp: 0,
-      forgePoints: 0,
       reason: 'AI Coach Multiplier Activated',
       actionId: 'ai-coach-demo-activated',
       applyMultiplier: false,
@@ -8406,7 +8467,6 @@ export default function WorkoutGenerator() {
         }
         awardProgress({
           xp: 25,
-          forgePoints: 0,
           reason: 'Workout Shared',
           actionId: `shared-workout-${entry.id}`,
           eventType: 'share'
@@ -9937,16 +9997,117 @@ export default function WorkoutGenerator() {
     </div>
   );
 
+  const getWorkoutAgentFingerprint = (currentWorkout = workout) => JSON.stringify(
+    (Array.isArray(currentWorkout) ? currentWorkout : []).map(exercise => ({
+      name: exercise?.name,
+      setsReps: exercise?.setsReps,
+      intensity: exercise?.intensityRange || exercise?.intensity,
+      tempo: exercise?.tempo,
+      rest: exercise?.rest
+    }))
+  );
+
+  const requestWorkoutAgentChange = async (prompt = aiPrompt) => {
+    const cleanPrompt = String(prompt || '').trim().slice(0, 700);
+    if (!cleanPrompt || aiLoading) return;
+
+    setAiPrompt('');
+    setAiError('');
+    setPendingAgentProposal(null);
+
+    if (!Array.isArray(workout) || !workout.length) {
+      const message = 'Generate or open a workout before asking ForgeAI Workout Agent.';
+      setAiResponse(message);
+      setAiError(message);
+      return;
+    }
+
+    setAiLoading(true);
+    try {
+      const { data: sessionData } = supabase
+        ? await supabase.auth.getSession()
+        : { data: { session: null } };
+      const proposal = await requestWorkoutAgentProposal({
+        prompt: cleanPrompt,
+        currentWorkout: workout,
+        settings: {
+          goal: settings.goal,
+          experience: settings.experience,
+          equipment: settings.equipment,
+          focus: settings.focus,
+          duration: settings.duration,
+          workoutStyle: settings.workoutStyle,
+          powerMethod: settings.powerMethod
+        },
+        accessToken: sessionData?.session?.access_token
+      });
+
+      setPendingAgentProposal({
+        ...proposal,
+        workoutFingerprint: getWorkoutAgentFingerprint(workout)
+      });
+      setAiResponse(proposal.coachExplanation || proposal.summary);
+      setAiMode('live');
+      console.log('[ForgeAI Workout Agent] proposal received', proposal);
+    } catch (error) {
+      console.error('[ForgeAI Workout Agent] proposal failed', error);
+      const message = error?.message || 'ForgeAI Workout Agent could not create a valid proposal. Please try again.';
+      setAiError(message);
+      setAiResponse(message);
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const applyAgentProposal = () => {
+    if (!pendingAgentProposal?.changes?.length) return;
+    if (pendingAgentProposal.workoutFingerprint !== getWorkoutAgentFingerprint(workout)) {
+      setAiError('The workout changed after this proposal was created. Ask ForgeAI to review it again.');
+      return;
+    }
+
+    try {
+      const originalWorkout = cloneWorkoutForAgent(workout);
+      const result = applyWorkoutAgentProposal(workout, pendingAgentProposal);
+      setLastWorkoutBeforeAgentChange(originalWorkout);
+      setWorkout(result.workout);
+      setShowWorkout(true);
+      setPendingAgentProposal(null);
+      setAiError('');
+      setAiResponse(`Applied ${result.appliedChanges.length} approved workout ${result.appliedChanges.length === 1 ? 'change' : 'changes'}.`);
+      console.log('[ForgeAI Workout Agent] approved changes applied', result.appliedChanges);
+    } catch (error) {
+      console.error('[ForgeAI Workout Agent] apply failed', error);
+      setAiError(error?.message || 'ForgeAI could not safely apply this proposal.');
+    }
+  };
+
+  const dismissAgentProposal = () => {
+    setPendingAgentProposal(null);
+    setAiError('');
+  };
+
+  const undoAgentChange = () => {
+    if (!Array.isArray(lastWorkoutBeforeAgentChange) || !lastWorkoutBeforeAgentChange.length) return;
+    setWorkout(cloneWorkoutForAgent(lastWorkoutBeforeAgentChange));
+    setShowWorkout(true);
+    setLastWorkoutBeforeAgentChange(null);
+    setPendingAgentProposal(null);
+    setAiError('');
+    setAiResponse('The last ForgeAI Workout Agent change was undone.');
+    console.log('[ForgeAI Workout Agent] last change undone');
+  };
+
   const AITab = () => {
     if (activeAIModule === 'nutrition') return <NutritionModule />;
     if (activeAIModule === 'store') return <StoreModule />;
 
     const promptChips = [
-      'Build me a leg workout',
-      'Analyze my current PRO program',
-      'Give me 5 exercises for abs',
-      'I want bigger and stronger arms. How should I train?',
-      'Review my workout'
+      'Make this workout easier',
+      'Reduce workout volume',
+      'Replace the main exercise',
+      'Increase rest on the main lift',
+      'Analyze this workout'
     ];
     const promptLimit = 700;
     const outputLimit = 2200;
@@ -10091,47 +10252,7 @@ export default function WorkoutGenerator() {
       }
     };
 
-    const sendPrompt = async (prompt = aiPrompt) => {
-      const cleanPrompt = prompt.trim().slice(0, promptLimit);
-      if (!cleanPrompt || aiLoading) return;
-      setAiPrompt('');
-      setAiLoading(true);
-      setAiError('');
-
-      const demoResponse = buildDemoCoachResponse(cleanPrompt);
-      const context = buildForgeCoachContext({
-        prompt: cleanPrompt,
-        settings: {
-          ...settings,
-          labels: settingLabels
-        },
-        generatedWorkout: workout,
-        workoutLogs,
-        userProgress,
-        activeProgram: proGeneratedProgram || proConfig
-      });
-
-      try {
-        console.log('[ForgeAI AI] request start', {
-          prompt: cleanPrompt,
-          settings: context.settings,
-          generatedWorkout: context.generatedWorkout,
-          workoutLogs: context.workoutLogs,
-          userProgress: context.userProgress
-        });
-        const answer = await generateGeminiResponse({ ...context, demoResponse });
-        console.log('[ForgeAI AI] response received', answer);
-        setAiResponse(String(answer || demoResponse).slice(0, outputLimit));
-        setAiMode('live');
-      } catch (error) {
-        console.error('[ForgeAI AI] error', error);
-        setAiMode('demo');
-        setAiResponse(String(error?.fallbackAnswer || demoResponse).slice(0, outputLimit));
-        setAiError(error?.message || 'Live AI unavailable. Demo AI answered with local workout context.');
-      } finally {
-        setAiLoading(false);
-      }
-    };
+    const sendPrompt = (prompt = aiPrompt) => requestWorkoutAgentChange(prompt);
 
     return (
       <div className="space-y-5">
@@ -10184,7 +10305,62 @@ export default function WorkoutGenerator() {
         <PremiumCard variant="secondary">
           <SectionHeader icon={Sparkles} eyebrow="Coach Response" title="Live Insight" subtitle={aiMode === 'live' ? 'Powered by Gemini' : null} />
           {aiError && <div className="mb-4 rounded-2xl border border-amber-200/15 bg-amber-200/[0.06] px-4 py-3 text-xs font-semibold leading-5 text-amber-100/85">{aiError}</div>}
-          <p className="whitespace-pre-line break-words text-sm leading-7 text-zinc-300">{aiLoading ? 'ForgeAI Coach is analyzing your training context...' : aiResponse}</p>
+          <p className="whitespace-pre-line break-words text-sm leading-7 text-zinc-300">{aiLoading ? 'ForgeAI Workout Agent is reviewing the current workout...' : aiResponse}</p>
+
+          {pendingAgentProposal && !aiLoading && (
+            <div className="mt-5 space-y-4 rounded-[1.5rem] border border-amber-100/14 bg-amber-100/[0.045] p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-[0.58rem] font-black uppercase tracking-[0.2em] text-amber-100/62">Workout Agent Proposal</div>
+                  <h3 className="mt-1 text-xl font-black tracking-[-0.04em] text-white">{pendingAgentProposal.summary}</h3>
+                </div>
+                <span className={`shrink-0 rounded-full border px-2.5 py-1 text-[0.55rem] font-black uppercase tracking-[0.14em] ${pendingAgentProposal.riskLevel === 'high' ? 'border-red-300/20 bg-red-300/[0.08] text-red-200' : pendingAgentProposal.riskLevel === 'medium' ? 'border-orange-300/20 bg-orange-300/[0.08] text-orange-100' : 'border-emerald-300/20 bg-emerald-300/[0.08] text-emerald-200'}`}>
+                  {pendingAgentProposal.riskLevel} risk
+                </span>
+              </div>
+
+              {pendingAgentProposal.changes.length > 0 && (
+                <div className="space-y-2">
+                  {pendingAgentProposal.changes.map(change => (
+                    <div key={change.id} className="rounded-2xl border border-white/[0.07] bg-black/22 p-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-sm font-black text-white">{change.exerciseName}</span>
+                        <span className="rounded-full border border-white/[0.07] bg-white/[0.035] px-2 py-0.5 text-[0.52rem] font-black uppercase tracking-[0.14em] text-zinc-400">{change.field}</span>
+                      </div>
+                      <div className="mt-2 text-sm font-bold text-zinc-300">
+                        {change.type === 'remove_exercise' ? (
+                          <span className="text-red-200">Remove from this workout</span>
+                        ) : (
+                          <><span className="text-zinc-500">{change.before || 'Current'}</span><ChevronRight className="mx-1.5 inline h-4 w-4 text-amber-100/55" /><span className="text-amber-100">{change.after}</span></>
+                        )}
+                      </div>
+                      <p className="mt-2 text-xs font-semibold leading-5 text-zinc-500">{change.reason}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex gap-2">
+                {pendingAgentProposal.changes.length > 0 && (
+                  <button type="button" onClick={applyAgentProposal} className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full bg-amber-100 px-4 py-2.5 text-sm font-black text-zinc-950 transition hover:bg-amber-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200">
+                    <CheckCircle2 className="h-4 w-4" />
+                    Apply Changes
+                  </button>
+                )}
+                <button type="button" onClick={dismissAgentProposal} className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full border border-white/[0.09] bg-white/[0.04] px-4 py-2.5 text-sm font-black text-zinc-200 transition hover:bg-white/[0.07] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200">
+                  <X className="h-4 w-4" />
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          )}
+
+          {!pendingAgentProposal && lastWorkoutBeforeAgentChange && !aiLoading && (
+            <button type="button" onClick={undoAgentChange} className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-amber-100/18 bg-amber-100/[0.055] px-4 py-2.5 text-sm font-black text-amber-100 transition hover:bg-amber-100/[0.09] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200">
+              <Repeat className="h-4 w-4" />
+              Undo Agent Change
+            </button>
+          )}
         </PremiumCard>
 
         <PremiumCard variant="secondary" className="space-y-4">
@@ -16463,6 +16639,8 @@ export default function WorkoutGenerator() {
       const proSessionWorkout = createProSessionWorkout(day, weekNumber);
       if (!proSessionWorkout.length) return;
 
+      setPendingAgentProposal(null);
+      setLastWorkoutBeforeAgentChange(null);
       setWorkout(proSessionWorkout);
       setShowWorkout(true);
       setSetLogs(createInitialSetLogs(proSessionWorkout));
@@ -17901,7 +18079,7 @@ export default function WorkoutGenerator() {
       {
         eyebrow: 'About ForgeAI',
         rows: [
-          { icon: Info, title: 'App Version', value: 'v45.117' },
+          { icon: Info, title: 'App Version', value: APP_VERSION },
           { icon: TrendingUp, title: 'Roadmap' },
           { icon: MessageCircle, title: 'Community' },
           { icon: ClipboardList, title: 'Terms' },
@@ -18316,7 +18494,6 @@ export default function WorkoutGenerator() {
       });
       awardProgress({
         xp: referralSignupXp,
-        forgePoints: 0,
         reason: 'Referral Signup',
         actionId: `referral-signup-${demoUserId}`,
         applyMultiplier: false,
@@ -18346,7 +18523,6 @@ export default function WorkoutGenerator() {
       }));
       awardProgress({
         xp: purchaseXp,
-        forgePoints: 0,
         reason: `Referral ${blockWeeks} Week PRO Purchase`,
         actionId: `referral-pro-purchase-${demoPurchaseId}`,
         applyMultiplier: false,
@@ -18389,9 +18565,6 @@ export default function WorkoutGenerator() {
               <div className="mt-5 text-6xl font-black leading-none tracking-[-0.075em] text-amber-100 drop-shadow-[0_0_28px_rgba(245,158,11,0.22)]">
                 +{celebration.xp} XP
               </div>
-              {celebration.forgePoints > 0 && (
-                <div className="mt-2 text-sm font-black text-zinc-300">+{celebration.forgePoints} Forge Points</div>
-              )}
               <p className="mx-auto mt-4 max-w-xs text-sm leading-6 text-zinc-400">Momentum secured. Keep stacking progress.</p>
 
               <div className="mt-6 grid grid-cols-2 gap-2 text-left">
