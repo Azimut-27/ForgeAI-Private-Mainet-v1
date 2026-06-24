@@ -58,9 +58,8 @@ import {
   X,
   Zap
 } from 'lucide-react';
-import { isSupabaseConfigured, supabase } from './lib/supabase';
-import { APP_VERSION } from './appVersion';
 import { buildForgeCoachContext, generateGeminiResponse } from './lib/gemini';
+import { isSupabaseConfigured, supabase } from './lib/supabase';
 import {
   deleteAllUserWorkoutLogs,
   deleteUserWorkoutLog,
@@ -121,14 +120,6 @@ const createForgeUserFromSupabase = (user) => {
   };
 };
 
-const BETA_ALLOWED_EMAILS = [
-  'example1@gmail.com',
-  'example2@gmail.com'
-];
-
-const BETA_ACCESS_DENIED_MESSAGE = 'This ForgeAI private beta is invite-only.';
-const normalizeBetaEmail = (email) => String(email || '').trim().toLowerCase();
-const isBetaEmailAllowed = (email) => BETA_ALLOWED_EMAILS.includes(normalizeBetaEmail(email));
 export default function WorkoutGenerator() {
   const [authUser, setAuthUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -157,35 +148,11 @@ export default function WorkoutGenerator() {
 
   useEffect(() => {
     let isMounted = true;
-    let betaSignOutPending = false;
-
-    const denyBetaAccess = async (user) => {
-      const normalizedEmail = normalizeBetaEmail(user?.email);
-      console.warn('ForgeAI beta access denied', normalizedEmail);
-      if (isMounted) {
-        setCloudDataLoading(false);
-        setAuthUser(null);
-        setAuthMessage(BETA_ACCESS_DENIED_MESSAGE);
-        setAuthLoading(false);
-      }
-
-      if (betaSignOutPending) return;
-      betaSignOutPending = true;
-      try {
-        await supabase.auth.signOut();
-      } catch (signOutError) {
-        console.error('ForgeAI beta access sign out failed', signOutError);
-      } finally {
-        betaSignOutPending = false;
-      }
-    };
 
     const initializeSupabaseSession = async () => {
       if (!supabase) {
         if (isMounted) {
           setAuthUser(null);
-          setAuthMessage('');
-          setCloudDataLoading(false);
           setAuthLoading(false);
         }
         return;
@@ -196,16 +163,7 @@ export default function WorkoutGenerator() {
       if (error) {
         setAuthMessage(error.message || 'Could not restore your ForgeAI session.');
       }
-      const sessionUser = data?.session?.user;
-      if (sessionUser && !isBetaEmailAllowed(sessionUser.email)) {
-        await denyBetaAccess(sessionUser);
-        return;
-      }
-      if (sessionUser) {
-        console.log('ForgeAI beta access approved', normalizeBetaEmail(sessionUser.email));
-        setAuthMessage('');
-      }
-      const restoredUser = createForgeUserFromSupabase(sessionUser);
+      const restoredUser = createForgeUserFromSupabase(data?.session?.user);
       setCloudDataLoading(!!restoredUser);
       setAuthUser(restoredUser);
       if (restoredUser) {
@@ -217,25 +175,7 @@ export default function WorkoutGenerator() {
     initializeSupabaseSession();
 
     const { data: listener } = supabase?.auth.onAuthStateChange((_event, session) => {
-      const sessionUser = session?.user;
-      if (sessionUser && !isBetaEmailAllowed(sessionUser.email)) {
-        setCloudDataLoading(false);
-        setAuthUser(null);
-        setAuthMessage(BETA_ACCESS_DENIED_MESSAGE);
-        setAuthLoading(false);
-        console.warn('ForgeAI beta access denied', normalizeBetaEmail(sessionUser.email));
-
-        // Run sign-out after the auth callback completes to avoid locking the auth client.
-        window.setTimeout(() => {
-          void denyBetaAccess(sessionUser);
-        }, 0);
-        return;
-      }
-      if (sessionUser) {
-        console.log('ForgeAI beta access approved', normalizeBetaEmail(sessionUser.email));
-        setAuthMessage('');
-      }
-      const nextUser = createForgeUserFromSupabase(sessionUser);
+      const nextUser = createForgeUserFromSupabase(session?.user);
       setCloudDataLoading(!!nextUser);
       setAuthUser(nextUser);
       if (nextUser) {
@@ -1222,10 +1162,12 @@ export default function WorkoutGenerator() {
     'Back Squat Heel Elevated': { primary: 'Quadriceps, Gluteus Maximus', secondary: 'Hamstrings, Adductors', stabilizers: 'Erector Spinae, Core, Upper Back, Calves' },
     'Low Bar Back Squat': { primary: 'Quadriceps, Gluteus Maximus', secondary: 'Hamstrings, Adductors', stabilizers: 'Erector Spinae, Core, Upper Back, Calves' },
     'Box Back Squat': { primary: 'Quadriceps, Gluteus Maximus', secondary: 'Hamstrings, Adductors', stabilizers: 'Erector Spinae, Core, Upper Back, Calves' },
+    'Pin Back Squat': { primary: 'Quadriceps, Gluteus Maximus', secondary: 'Hamstrings, Adductors', stabilizers: 'Erector Spinae, Core, Upper Back, Calves' },
     'Eccentric Back Squat': { primary: 'Quadriceps, Gluteus Maximus', secondary: 'Hamstrings, Adductors', stabilizers: 'Erector Spinae, Core, Upper Back, Calves' },
     'Front Squat': { primary: 'Quadriceps', secondary: 'Gluteus Maximus, Adductors', stabilizers: 'Core, Upper Back, Erector Spinae' },
     'Front Squat Heel Elevated': { primary: 'Quadriceps', secondary: 'Gluteus Maximus, Adductors', stabilizers: 'Core, Upper Back, Erector Spinae' },
     'Box Front Squat': { primary: 'Quadriceps', secondary: 'Gluteus Maximus, Adductors', stabilizers: 'Core, Upper Back, Erector Spinae' },
+    'Pin Front Squat': { primary: 'Quadriceps', secondary: 'Gluteus Maximus, Adductors', stabilizers: 'Core, Upper Back, Erector Spinae' },
     'Eccentric Front Squat': { primary: 'Quadriceps', secondary: 'Gluteus Maximus, Adductors', stabilizers: 'Core, Upper Back, Erector Spinae' },
     'Bulgarian Squat w Dumbbells': { primary: 'Quadriceps, Gluteus Maximus', secondary: 'Hamstrings, Adductors', stabilizers: 'Core, Calves' },
     'Bulgarian Squat w Kettlebells': { primary: 'Quadriceps, Gluteus Maximus', secondary: 'Hamstrings, Adductors', stabilizers: 'Core, Calves' },
@@ -1252,6 +1194,7 @@ export default function WorkoutGenerator() {
     'Kettlebell Swing': { primary: 'Gluteus Maximus, Hamstrings', secondary: 'Erector Spinae, Lats', stabilizers: 'Core, Grip' },
     'Snatch Grip Romanian DL': { primary: 'Hamstrings, Gluteus Maximus', secondary: 'Erector Spinae, Adductors', stabilizers: 'Core, Lats, Forearms' },
     'Snatch Grip Deficit RDL': { primary: 'Hamstrings, Gluteus Maximus', secondary: 'Erector Spinae, Adductors', stabilizers: 'Core, Lats, Forearms' },
+    'Snatch Pull': { primary: 'Gluteus Maximus, Quadriceps', secondary: 'Hamstrings, Traps, Erector Spinae', stabilizers: 'Core, Lats, Rhomboids' },
     'Rack Pull DL': { primary: 'Gluteus Maximus, Quadriceps', secondary: 'Hamstrings, Traps, Erector Spinae', stabilizers: 'Core, Lats, Rhomboids' },
     'Rack Pull Clean Pull': { primary: 'Gluteus Maximus, Quadriceps', secondary: 'Hamstrings, Traps, Erector Spinae', stabilizers: 'Core, Lats, Rhomboids' },
     'Rack Pull Snatch Pull': { primary: 'Gluteus Maximus, Quadriceps', secondary: 'Hamstrings, Traps, Erector Spinae', stabilizers: 'Core, Lats, Rhomboids' },
@@ -1298,6 +1241,7 @@ export default function WorkoutGenerator() {
     'High Cable Curl': { primary: 'Biceps Brachii', secondary: 'Brachialis, Brachioradialis', stabilizers: 'Core, Forearms' },
     'Machine Preacher Curl': { primary: 'Biceps Brachii', secondary: 'Brachialis, Brachioradialis', stabilizers: 'Core, Forearms' },
     'Machine Curl': { primary: 'Biceps Brachii', secondary: 'Brachialis, Brachioradialis', stabilizers: 'Core, Forearms' },
+    'Close-Grip Bench Press': { primary: 'Triceps Brachii', secondary: 'Chest, Anterior Deltoids', stabilizers: 'Core, Upper Back' },
     'Close-Grip Bench Press': { primary: 'Triceps Brachii', secondary: 'Chest, Anterior Deltoids', stabilizers: 'Core, Upper Back' },
     'Weighted V Dips': { primary: 'Triceps Brachii', secondary: 'Chest, Anterior Deltoids', stabilizers: 'Core, Upper Back' },
     'Skull Crushers EZ-Bar': { primary: 'Triceps Brachii', secondary: 'Anterior Deltoids', stabilizers: 'Core, Shoulders' },
@@ -5004,6 +4948,7 @@ export default function WorkoutGenerator() {
     return {
       xp,
       level,
+      forgePoints: Number(overrides.forgePoints) || 0,
       dailyClaimStreak: Number(overrides.dailyClaimStreak) || 0,
       totalDailyClaims: Number(overrides.totalDailyClaims) || 0,
       lastDailyClaimDate: overrides.lastDailyClaimDate || null,
@@ -5063,6 +5008,7 @@ export default function WorkoutGenerator() {
         console.log('ForgeAI cloud progress saved', {
           userId: sessionUser.id,
           xp: saved.xp,
+          forgePoints: saved.forge_points,
           rank: saved.rank
         });
         return saved;
@@ -6280,7 +6226,7 @@ export default function WorkoutGenerator() {
     return parts.length ? parts.join(' + ') : 'Free';
   };
 
-  const awardProgress = ({ xp = 0, reason = 'ForgeAI progress', actionId, applyMultiplier = true, eventType = 'progress', updates = {} }) => {
+  const awardProgress = ({ xp = 0, forgePoints = 0, reason = 'ForgeAI progress', actionId, applyMultiplier = true, eventType = 'progress', updates = {} }) => {
     const id = actionId || `${reason}-${Date.now()}`;
     setUserProgress(current => {
       const base = normalizeUserProgress(current || loadUserProgress());
@@ -6288,15 +6234,18 @@ export default function WorkoutGenerator() {
 
       const multiplier = applyMultiplier && xp > 0 ? getXpMultiplier(base) : 1;
       const awardedXp = Math.round((Number(xp) || 0) * multiplier);
+      const awardedForgePoints = 0;
       const next = normalizeUserProgress({
         ...base,
         ...updates,
         xp: base.xp + awardedXp,
+        forgePoints: base.forgePoints,
         awardedActions: {
           ...base.awardedActions,
           [id]: {
             reason,
             xp: awardedXp,
+            forgePoints: awardedForgePoints,
             multiplier,
             awardedAt: new Date().toISOString()
           }
@@ -6306,6 +6255,7 @@ export default function WorkoutGenerator() {
             id,
             type: eventType,
             amountXP: awardedXp,
+            amountForgePoints: awardedForgePoints,
             multiplier,
             label: reason,
             createdAt: new Date().toISOString()
@@ -6322,6 +6272,10 @@ export default function WorkoutGenerator() {
     awardProgress({ xp: amount, reason, actionId: actionId || `${reason}-xp` });
   };
 
+  const addForgePoints = (amount, reason, actionId) => {
+    awardProgress({ xp: 0, reason, actionId: actionId || `${reason}-xp-only` });
+  };
+
   const claimDailyReward = () => {
     const base = normalizeUserProgress(userProgress || loadUserProgress());
     if (!canClaimDaily(base)) return;
@@ -6331,10 +6285,12 @@ export default function WorkoutGenerator() {
     const newStreak = getDailyStreakAfterClaim(base);
     const multiplier = getXpMultiplier(base);
     const claimXp = Math.round(50 * multiplier);
+    const claimForgePoints = 0;
     const actionId = `daily-claim-${Date.now()}`;
     const next = normalizeUserProgress({
       ...base,
       xp: base.xp + claimXp,
+      forgePoints: base.forgePoints,
       dailyClaimStreak: newStreak,
       totalDailyClaims: (base.totalDailyClaims || 0) + 1,
       lastDailyClaimDate: today,
@@ -6344,6 +6300,7 @@ export default function WorkoutGenerator() {
         [actionId]: {
           reason: 'Daily Forge Claim',
           xp: claimXp,
+          forgePoints: claimForgePoints,
           multiplier,
           awardedAt: claimedAt
         }
@@ -6353,6 +6310,7 @@ export default function WorkoutGenerator() {
           id: actionId,
           type: 'daily_claim',
           amountXP: claimXp,
+          amountForgePoints: claimForgePoints,
           multiplier,
           label: 'Daily Claim',
           createdAt: claimedAt
@@ -6365,6 +6323,7 @@ export default function WorkoutGenerator() {
     setUserProgress(next);
     setDailyClaimCelebration({
       xp: claimXp,
+      forgePoints: claimForgePoints,
       multiplier,
       multiplierLabel: getMultiplierLabel(base),
       totalXp: next.xp,
@@ -6388,6 +6347,7 @@ export default function WorkoutGenerator() {
       eligible,
       multiplier,
       xp: eligible ? Math.round(120 * multiplier) : 0,
+      forgePoints: 0,
       label: getMultiplierLabel(current)
     };
   };
@@ -6399,6 +6359,7 @@ export default function WorkoutGenerator() {
 
     awardProgress({
       xp: 120,
+      forgePoints: 0,
       reason: 'Workout Completed',
       actionId: `workout-xp-${today}`,
       eventType: 'workout_completed',
@@ -6417,6 +6378,7 @@ export default function WorkoutGenerator() {
     return {
       baseXp: xpByWeeks[weeks] || 300,
       xp: Math.round((xpByWeeks[weeks] || 300) * multiplier),
+      forgePoints: 0,
       multiplier
     };
   };
@@ -6426,6 +6388,7 @@ export default function WorkoutGenerator() {
     const reward = getProPurchaseReward(weeks, base);
     awardProgress({
       xp: reward.baseXp,
+      forgePoints: 0,
       reason: `PRO ${weeks} Week Block`,
       actionId,
       eventType: 'pro_unlock',
@@ -6442,6 +6405,7 @@ export default function WorkoutGenerator() {
     if (base.aiSubscriptionActive) return;
     awardProgress({
       xp: 0,
+      forgePoints: 0,
       reason: 'AI Coach Multiplier Activated',
       actionId: 'ai-coach-demo-activated',
       applyMultiplier: false,
@@ -8442,6 +8406,7 @@ export default function WorkoutGenerator() {
         }
         awardProgress({
           xp: 25,
+          forgePoints: 0,
           reason: 'Workout Shared',
           actionId: `shared-workout-${entry.id}`,
           eventType: 'share'
@@ -9977,11 +9942,11 @@ export default function WorkoutGenerator() {
     if (activeAIModule === 'store') return <StoreModule />;
 
     const promptChips = [
-      'Make this workout easier',
-      'Reduce workout volume',
-      'Replace the main exercise',
-      'Increase rest on the main lift',
-      'Analyze this workout'
+      'Build me a leg workout',
+      'Analyze my current PRO program',
+      'Give me 5 exercises for abs',
+      'I want bigger and stronger arms. How should I train?',
+      'Review my workout'
     ];
     const promptLimit = 700;
     const outputLimit = 2200;
@@ -10219,7 +10184,7 @@ export default function WorkoutGenerator() {
         <PremiumCard variant="secondary">
           <SectionHeader icon={Sparkles} eyebrow="Coach Response" title="Live Insight" subtitle={aiMode === 'live' ? 'Powered by Gemini' : null} />
           {aiError && <div className="mb-4 rounded-2xl border border-amber-200/15 bg-amber-200/[0.06] px-4 py-3 text-xs font-semibold leading-5 text-amber-100/85">{aiError}</div>}
-          <p className="whitespace-pre-line break-words text-sm leading-7 text-zinc-300">{aiLoading ? 'ForgeAI Coach is thinking...' : aiResponse}</p>
+          <p className="whitespace-pre-line break-words text-sm leading-7 text-zinc-300">{aiLoading ? 'ForgeAI Coach is analyzing your training context...' : aiResponse}</p>
         </PremiumCard>
 
         <PremiumCard variant="secondary" className="space-y-4">
@@ -17936,7 +17901,7 @@ export default function WorkoutGenerator() {
       {
         eyebrow: 'About ForgeAI',
         rows: [
-          { icon: Info, title: 'App Version', value: APP_VERSION },
+          { icon: Info, title: 'App Version', value: 'v45.117' },
           { icon: TrendingUp, title: 'Roadmap' },
           { icon: MessageCircle, title: 'Community' },
           { icon: ClipboardList, title: 'Terms' },
@@ -18351,6 +18316,7 @@ export default function WorkoutGenerator() {
       });
       awardProgress({
         xp: referralSignupXp,
+        forgePoints: 0,
         reason: 'Referral Signup',
         actionId: `referral-signup-${demoUserId}`,
         applyMultiplier: false,
@@ -18380,6 +18346,7 @@ export default function WorkoutGenerator() {
       }));
       awardProgress({
         xp: purchaseXp,
+        forgePoints: 0,
         reason: `Referral ${blockWeeks} Week PRO Purchase`,
         actionId: `referral-pro-purchase-${demoPurchaseId}`,
         applyMultiplier: false,
@@ -18422,6 +18389,9 @@ export default function WorkoutGenerator() {
               <div className="mt-5 text-6xl font-black leading-none tracking-[-0.075em] text-amber-100 drop-shadow-[0_0_28px_rgba(245,158,11,0.22)]">
                 +{celebration.xp} XP
               </div>
+              {celebration.forgePoints > 0 && (
+                <div className="mt-2 text-sm font-black text-zinc-300">+{celebration.forgePoints} Forge Points</div>
+              )}
               <p className="mx-auto mt-4 max-w-xs text-sm leading-6 text-zinc-400">Momentum secured. Keep stacking progress.</p>
 
               <div className="mt-6 grid grid-cols-2 gap-2 text-left">
