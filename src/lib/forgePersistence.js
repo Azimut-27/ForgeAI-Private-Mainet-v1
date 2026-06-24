@@ -74,10 +74,11 @@ export const upsertUserProgressCloud = async (userId, progress) => {
       user_id: userId,
       progress_data: normalizedProgress,
       xp: Number(normalizedProgress.xp) || 0,
+      forge_points: Number(normalizedProgress.forgePoints) || 0,
       rank: normalizedProgress.rank || null,
       updated_at: new Date().toISOString()
     }, { onConflict: 'user_id' })
-    .select('id, user_id, progress_data, xp, rank, updated_at, created_at')
+    .select('id, user_id, progress_data, xp, forge_points, rank, updated_at, created_at')
     .single();
   if (error) {
     console.error('ForgeAI cloud progress save failed', error);
