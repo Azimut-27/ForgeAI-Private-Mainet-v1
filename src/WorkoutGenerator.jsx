@@ -64,6 +64,7 @@ import {
   deleteAllUserWorkoutLogs,
   deleteUserWorkoutLog,
   getAuthenticatedSupabaseUser,
+  loadUserProgressCloud,
   loadUserProfile,
   loadUserPrograms,
   loadUserWorkoutLogs,
@@ -72,7 +73,8 @@ import {
   updateUserProfileName,
   updateUserProgram,
   updateUserWorkoutLog,
-  upsertUserProfile
+  upsertUserProfile,
+  upsertUserProgressCloud
 } from './lib/forgePersistence';
 import bodybuildingProExerciseDatabase from './data/bodybuildingProExerciseDatabase.json';
 import generalFitnessProExerciseDatabase from './data/generalFitnessProExerciseDatabase.json';
@@ -130,6 +132,8 @@ export default function WorkoutGenerator() {
   const supabaseHydratedUserRef = useRef(null);
   const cloudLogSyncInFlightRef = useRef(new Set());
   const cloudProgramSyncInFlightRef = useRef(new Set());
+  const progressCloudSaveQueueRef = useRef(Promise.resolve());
+  const progressCloudHydratedUserRef = useRef(null);
   const [settingsProfileMessage, setSettingsProfileMessage] = useState('');
   const [settings, setSettings] = useState({
     goal: 'build-muscle',
@@ -372,6 +376,7 @@ export default function WorkoutGenerator() {
     const userId = authUser?.id;
     if (!userId || !supabase) {
       supabaseHydratedUserRef.current = null;
+      progressCloudHydratedUserRef.current = null;
       setCloudDataLoading(false);
       return undefined;
     }
@@ -385,6 +390,27 @@ export default function WorkoutGenerator() {
       let usedLocalFallback = false;
       const localLogs = loadWorkoutLogs(userId);
       const localPrograms = loadLocalProPrograms(userId);
+      const localProgress = normalizeUserProgress(loadUserProgress());
+
+      try {
+        console.log('ForgeAI cloud progress load called', userId);
+        const cloudProgress = await loadUserProgressCloud(userId);
+        const nextProgress = normalizeUserProgress(cloudProgress || localProgress);
+        if (!cloudProgress) {
+          await upsertUserProgressCloud(userId, nextProgress);
+          console.log('ForgeAI local progress uploaded to Supabase', nextProgress.xp);
+        } else {
+          console.log('ForgeAI cloud progress loaded', nextProgress.xp);
+        }
+        saveUserProgressLocal(nextProgress);
+        if (!cancelled) setUserProgress(nextProgress);
+      } catch (error) {
+        console.error('[ForgeAI Supabase] progress load failed; using local fallback', error);
+        usedLocalFallback = true;
+        if (!cancelled) setUserProgress(localProgress);
+      } finally {
+        progressCloudHydratedUserRef.current = userId;
+      }
 
       try {
         console.log('ForgeAI program load called', userId);
@@ -4958,14 +4984,41 @@ export default function WorkoutGenerator() {
     }
   };
 
-  const saveUserProgress = (progress) => {
-    if (typeof window === 'undefined') return;
-
+  const saveUserProgressLocal = (progress) => {
+    const normalized = normalizeUserProgress(progress);
+    if (typeof window === 'undefined') return normalized;
     try {
-      window.localStorage.setItem('forgeai_user_progress', JSON.stringify(normalizeUserProgress(progress)));
+      window.localStorage.setItem('forgeai_user_progress', JSON.stringify(normalized));
     } catch (error) {
       setLogActionMessage('Progress saved in this session, but local storage was unavailable.');
     }
+    return normalized;
+  };
+
+  const saveUserProgress = (progress) => {
+    const normalized = saveUserProgressLocal(progress);
+    if (!supabase || !authUser?.id || progressCloudHydratedUserRef.current !== authUser.id) return normalized;
+
+    const expectedUserId = authUser.id;
+    progressCloudSaveQueueRef.current = progressCloudSaveQueueRef.current
+      .catch(() => undefined)
+      .then(async () => {
+        const sessionUser = await getAuthenticatedSupabaseUser(expectedUserId);
+        const saved = await upsertUserProgressCloud(sessionUser.id, normalized);
+        console.log('ForgeAI cloud progress saved', {
+          userId: sessionUser.id,
+          xp: saved.xp,
+          forgePoints: saved.forge_points,
+          rank: saved.rank
+        });
+        return saved;
+      })
+      .catch(error => {
+        console.error('ForgeAI cloud progress save failed; local fallback retained', error);
+        setCloudDataError(`Cloud XP sync failed: ${error?.message || 'Unknown Supabase error.'}`);
+      });
+
+    return normalized;
   };
 
   const loadRewardsState = () => {
