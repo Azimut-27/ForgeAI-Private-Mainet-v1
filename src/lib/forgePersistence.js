@@ -47,6 +47,46 @@ export const loadUserProfile = async (userId) => {
   return data;
 };
 
+export const loadUserProgressCloud = async (userId) => {
+  if (!userId) return null;
+  const client = requireSupabase();
+  await getAuthenticatedSupabaseUser(userId);
+  const { data, error } = await client
+    .from('user_progress')
+    .select('progress_data')
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (error) {
+    console.error('ForgeAI cloud progress load failed', error);
+    throw error;
+  }
+  return data?.progress_data || null;
+};
+
+export const upsertUserProgressCloud = async (userId, progress) => {
+  if (!userId || !progress) throw new Error('A user and progress object are required.');
+  const client = requireSupabase();
+  await getAuthenticatedSupabaseUser(userId);
+  const normalizedProgress = { ...progress };
+  const { data, error } = await client
+    .from('user_progress')
+    .upsert({
+      user_id: userId,
+      progress_data: normalizedProgress,
+      xp: Number(normalizedProgress.xp) || 0,
+      forge_points: Number(normalizedProgress.forgePoints) || 0,
+      rank: normalizedProgress.rank || null,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id' })
+    .select('id, user_id, progress_data, xp, forge_points, rank, updated_at, created_at')
+    .single();
+  if (error) {
+    console.error('ForgeAI cloud progress save failed', error);
+    throw error;
+  }
+  return data;
+};
+
 export const updateUserProfileName = async (userId, username, email = null) => {
   if (!userId) throw new Error('An authenticated user is required.');
   const client = requireSupabase();
