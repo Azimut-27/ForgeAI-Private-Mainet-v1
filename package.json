@@ -1,12 +1,13 @@
 {
-  "name": "workout-generator-v45-runner",
+  "name": "forgeai-agent",
   "private": true,
-  "version": "1.0.0",
+  "version": "46.5.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
-    "preview": "vite preview --host 127.0.0.1"
+    "preview": "vite preview --host 127.0.0.1",
+    "version:bump": "node scripts/bump-app-version.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
