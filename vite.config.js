@@ -1,12 +1,13 @@
 import react from '@vitejs/plugin-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
+import { generateWorkoutAgentProposal } from './server/workoutAgentCore.js';
 
-const readJsonBody = (req) => new Promise((resolve, reject) => {
+const readJsonBody = (req, maxLength = 12000) => new Promise((resolve, reject) => {
   let body = '';
   req.on('data', chunk => {
     body += chunk;
-    if (body.length > 12000) {
+    if (body.length > maxLength) {
       reject(new Error('Request body too large'));
       req.destroy();
     }
@@ -48,8 +49,8 @@ const createUserPrompt = ({ prompt, context }) => [
   JSON.stringify(context || {}, null, 2)
 ].join('\n');
 
-const getGeminiModelCandidates = () => {
-  const configured = process.env.GEMINI_MODEL;
+const getGeminiModelCandidates = (runtimeEnv = process.env) => {
+  const configured = runtimeEnv.GEMINI_MODEL;
   return [
     configured,
     'gemini-2.5-flash',
@@ -73,7 +74,7 @@ const isLikelyIncompleteAnswer = (answer, prompt) => {
   return false;
 };
 
-const aiCoachApiPlugin = () => ({
+const aiCoachApiPlugin = (runtimeEnv = process.env) => ({
   name: 'forgeai-coach-api',
   configureServer(server) {
     server.middlewares.use('/api/ai-coach', async (req, res) => {
@@ -86,8 +87,8 @@ const aiCoachApiPlugin = () => ({
         const body = await readJsonBody(req);
         const prompt = clampText(body.prompt, 700);
         const demoResponse = clampText(body.demoResponse, 1800) || 'ForgeAI Coach - Demo AI\n\nDemo coaching is ready. Add a prompt to get a workout-specific adjustment.';
-        const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY;
-        const modelCandidates = getGeminiModelCandidates();
+        const apiKey = runtimeEnv.GEMINI_API_KEY || runtimeEnv.GOOGLE_GENERATIVE_AI_API_KEY;
+        const modelCandidates = getGeminiModelCandidates(runtimeEnv);
 
         if (!prompt) {
           sendJson(res, { mode: 'demo', answer: demoResponse, error: 'Prompt was empty.' });
@@ -154,6 +155,30 @@ const aiCoachApiPlugin = () => ({
   }
 });
 
-export default defineConfig({
-  plugins: [react(), aiCoachApiPlugin()]
+const workoutAgentApiPlugin = (runtimeEnv = process.env) => ({
+  name: 'forgeai-workout-agent-api',
+  configureServer(server) {
+    server.middlewares.use('/api/workout-agent', async (req, res) => {
+      if (req.method !== 'POST') {
+        sendJson(res, { error: 'Method not allowed' }, 405);
+        return;
+      }
+
+      try {
+        const body = await readJsonBody(req, 100000);
+        const result = await generateWorkoutAgentProposal({ body, env: runtimeEnv });
+        sendJson(res, result.payload, result.status);
+      } catch (error) {
+        console.error('ForgeAI local Workout Agent route failed', error);
+        sendJson(res, { error: 'ForgeAI Workout Agent could not process this request.' }, 500);
+      }
+    });
+  }
+});
+
+export default defineConfig(({ mode }) => {
+  const runtimeEnv = { ...process.env, ...loadEnv(mode, process.cwd(), '') };
+  return {
+    plugins: [react(), aiCoachApiPlugin(runtimeEnv), workoutAgentApiPlugin(runtimeEnv)]
+  };
 });
